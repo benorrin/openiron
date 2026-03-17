@@ -1,6 +1,8 @@
 package services
 
 import (
+	"fmt"
+
 	"github.com/jmoiron/sqlx"
 	"openiron-api/models"
 )
@@ -25,15 +27,15 @@ func GetExercisesByMuscleGroup(db *sqlx.DB, muscleGroup string) ([]models.Exerci
 	return nil, fmt.Errorf("not implemented")
 }
 
-func CreateExercise(db *sqlx.DB, req models.CreateExerciseRequest, createdBy string) (*models.Exercise, error) {
-	// Create new exercise
-	return nil, fmt.Errorf("not implemented")
-}
+// func CreateExercise(db *sqlx.DB, req models.CreateExerciseRequest, createdBy string) (*models.Exercise, error) {
+// 	// Create new exercise
+// 	return nil, fmt.Errorf("not implemented")
+// }
 
-func UpdateExercise(db *sqlx.DB, exerciseID int, req models.UpdateExerciseRequest) (*models.Exercise, error) {
-	// Update existing exercise
-	return nil, fmt.Errorf("not implemented")
-}
+// func UpdateExercise(db *sqlx.DB, exerciseID int, req models.UpdateExerciseRequest) (*models.Exercise, error) {
+// 	// Update existing exercise
+// 	return nil, fmt.Errorf("not implemented")
+// }
 
 func DeleteExercise(db *sqlx.DB, exerciseID int) error {
 	// Delete exercise

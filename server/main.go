@@ -6,6 +6,7 @@ import (
 
 	"openiron-api/db"
 	"openiron-api/routes"
+	"openiron-api/services"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -26,6 +27,11 @@ func main() {
 	// Run migrations
 	if err := db.RunMigrations(); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
+	}
+
+	// Create default admin user if none exists
+	if err := services.CreateAdminIfNotExists(db.DB); err != nil {
+		log.Fatalf("Failed to create admin user: %v", err)
 	}
 
 	// Initialize router

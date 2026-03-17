@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"openiron-api/handlers"
+	"openiron-api/middleware"
 )
 
 func SetupRoutes(router *gin.Engine) {
@@ -46,8 +48,17 @@ func SetupRoutes(router *gin.Engine) {
 }
 
 func setupAuthRoutes(router *gin.RouterGroup) {
-	// TODO: Implement authentication endpoints
-	// Login, refresh token, etc.
+	auth := router.Group("/auth")
+	{
+		auth.POST("/login", handlers.Login) // POST /api/v1/auth/login
+	}
+
+	// Protected auth routes
+	authProtected := router.Group("/auth")
+	authProtected.Use(middleware.AuthMiddleware())
+	{
+		authProtected.POST("/refresh", handlers.RefreshToken) // POST /api/v1/auth/refresh
+	}
 }
 
 func setupUserRoutes(router *gin.RouterGroup) {
@@ -71,6 +82,14 @@ func setupWorkoutRoutes(router *gin.RouterGroup) {
 }
 
 func setupAdminRoutes(router *gin.RouterGroup) {
-	// TODO: Admin user management
-	// Create users, manage accounts, reset passwords
+	admin := router.Group("/admin")
+	admin.Use(middleware.AuthMiddleware())
+	admin.Use(middleware.AdminMiddleware())
+	{
+		admin.POST("/users", handlers.CreateUser)          // POST /api/v1/admin/users
+		admin.GET("/users", handlers.ListUsers)            // GET /api/v1/admin/users
+		admin.GET("/users/:id", handlers.GetUser)          // GET /api/v1/admin/users/:id
+		admin.DELETE("/users/:id", handlers.DeleteUser)    // DELETE /api/v1/admin/users/:id
+		admin.POST("/users/:id/reset-password", handlers.ResetPassword) // POST /api/v1/admin/users/:id/reset-password
+	}
 }
