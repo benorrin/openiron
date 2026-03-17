@@ -41,7 +41,7 @@ func CreateAdminIfNotExists(db *sqlx.DB) error {
 	}
 
 	// Create the admin user
-	query := `INSERT INTO users (username, password_hash, role, created_at) VALUES ($1, $2, 'admin', CURRENT_TIMESTAMP)`
+	query := `INSERT INTO users (username, password_hash, role, created_at, updated_at) VALUES ($1, $2, 'admin', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`
 	_, err = db.Exec(query, adminUsername, hashedPassword)
 	if err != nil {
 		return fmt.Errorf("failed to create admin user: %w", err)
@@ -52,6 +52,18 @@ func CreateAdminIfNotExists(db *sqlx.DB) error {
 
 // CreateUser creates a new user account
 func CreateUser(db *sqlx.DB, req models.CreateUserRequest) (*models.User, error) {
+	// Check if any user exists
+	var count int
+	err := db.Get(&count, "SELECT COUNT(*) FROM users WHERE username = $1", req.Username)
+	if err != nil {
+		return nil, fmt.Errorf("failed to check for existing users: %w", err)
+	}
+
+	// If user exists, do nothing
+	if count > 0 {
+		return nil, fmt.Errorf("user already exists")
+	}
+
 	// Hash the password
 	hashedPassword, err := utils.HashPassword(req.Password)
 	if err != nil {
@@ -59,7 +71,7 @@ func CreateUser(db *sqlx.DB, req models.CreateUserRequest) (*models.User, error)
 	}
 
 	// Create the user
-	query := `INSERT INTO users (username, password_hash, role, created_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP) RETURNING id, username, role, created_at`
+	query := `INSERT INTO users (username, password_hash, role, created_at, updated_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING id, username, role, created_at, updated_at`
 	var user models.User
 	err = db.QueryRowx(query, req.Username, hashedPassword, req.Role).StructScan(&user)
 	if err != nil {
@@ -72,7 +84,7 @@ func CreateUser(db *sqlx.DB, req models.CreateUserRequest) (*models.User, error)
 // GetUser retrieves a user by their ID
 func GetUser(db *sqlx.DB, userID int) (*models.User, error) {
 	var user models.User
-	query := `SELECT id, username, role, created_at FROM users WHERE id = $1`
+	query := `SELECT id, username, role, created_at, updated_at FROM users WHERE id = $1`
 	err := db.Get(&user, query, userID)
 	if err != nil {
 		if err.Error() == "sql: no rows in result set" {
@@ -86,7 +98,7 @@ func GetUser(db *sqlx.DB, userID int) (*models.User, error) {
 // GetAllUsers retrieves all users from the database
 func GetAllUsers(db *sqlx.DB) ([]models.User, error) {
 	var users []models.User
-	query := `SELECT id, username, role, created_at FROM users ORDER BY username`
+	query := `SELECT id, username, role, created_at, updated_at FROM users ORDER BY username`
 	err := db.Select(&users, query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get users: %w", err)
@@ -169,7 +181,7 @@ func ChangePassword(db *sqlx.DB, userID int, oldPassword, newPassword string) er
 	}
 
 	// Update the password
-	updateQuery := `UPDATE users SET password_hash = $1 WHERE id = $2`
+	updateQuery := `UPDATE users SET password_hash = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2`
 	_, err = db.Exec(updateQuery, hashedPassword, userID)
 	if err != nil {
 		return fmt.Errorf("failed to update password: %w", err)
