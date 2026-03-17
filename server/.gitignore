@@ -1,0 +1,38 @@
+# Binaries
+openiron-server
+*.o
+*.a
+*.so
+
+# Test binaries
+*.test
+
+# Output of coverage
+*.out
+
+# Dependency directories
+vendor/
+
+# Go workspace file
+go.work
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment
+.env
+.env.local
+
+# Uploads
+uploads/
+
+# Database
+postgres_data/
+
+# OS
+.DS_Store
+Thumbs.db

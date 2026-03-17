@@ -1,0 +1,11 @@
+DROP INDEX IF EXISTS idx_users_username;
+DROP INDEX IF EXISTS idx_users_email;
+DROP INDEX IF EXISTS idx_user_profiles_user_id;
+DROP INDEX IF EXISTS idx_workouts_user_id;
+DROP INDEX IF EXISTS idx_workouts_date;
+DROP INDEX IF EXISTS idx_workout_exercises_workout_id;
+DROP INDEX IF EXISTS idx_workout_exercises_exercise_id;
+DROP INDEX IF EXISTS idx_body_metrics_user_id;
+DROP INDEX IF EXISTS idx_body_metrics_date;
+DROP INDEX IF EXISTS idx_body_metric_values_body_metric_id;
+DROP INDEX IF EXISTS idx_body_metric_photos_body_metric_id;
