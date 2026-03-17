@@ -1,2 +1,2 @@
 # openiron
-Self-hosted weightlifting, gym and fitness tracker
+A self-hosted weightlifting, gym and fitness tracker
