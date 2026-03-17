@@ -45,5 +45,21 @@ func Login(c *gin.Context) {
 
 // RefreshToken generates a new JWT token for an authenticated user
 func RefreshToken(c *gin.Context) {
-	// POST /api/v1/auth/refresh
+	// Get user ID from JWT middleware
+	userID := c.MustGet("user_id").(int)
+	role := c.MustGet("role").(string)
+
+	// Generate new token
+	token, expiresAt, err := middleware.GenerateToken(userID, role)
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to generate token", err.Error())
+		return
+	}
+
+	response := models.LoginResponse{
+		Token:     token,
+		ExpiresAt: expiresAt,
+	}
+
+	utils.SuccessResponse(c, response)
 }

@@ -50,6 +50,13 @@ func setupAuthRoutes(router *gin.RouterGroup) {
 	{
 		auth.POST("/login", handlers.Login) // POST /api/v1/auth/login
 	}
+
+	// Protected auth routes
+	authProtected := router.Group("/auth")
+	authProtected.Use(middleware.AuthMiddleware())
+	{
+		authProtected.POST("/refresh", handlers.RefreshToken) // POST /api/v1/auth/refresh
+	}
 }
 
 func setupUserRoutes(router *gin.RouterGroup) {
