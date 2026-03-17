@@ -26,6 +26,16 @@ type ResetPasswordRequest struct {
 	NewPassword string `json:"new_password" binding:"required,min=6"`
 }
 
+// UpdateUserRoleRequest for admin changing a user's role
+type UpdateUserRoleRequest struct {
+	Role string `json:"role" binding:"required,oneof=admin user"`
+}
+
+// UpdateUsernameRequest for changing a username
+type UpdateUsernameRequest struct {
+	Username string `json:"username" binding:"required,min=3"`
+}
+
 // ErrorResponse standard error format
 type ErrorResponse struct {
 	Error  string `json:"error"`
