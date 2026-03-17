@@ -59,9 +59,9 @@ func CreateUser(db *sqlx.DB, req models.CreateUserRequest) (*models.User, error)
 	}
 
 	// Create the user
-	query := `INSERT INTO users (username, email, password_hash, role, created_at) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP) RETURNING id, username, email, role, created_at`
+	query := `INSERT INTO users (username, password_hash, role, created_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP) RETURNING id, username, role, created_at`
 	var user models.User
-	err = db.QueryRowx(query, req.Username, req.Email, hashedPassword, req.Role).StructScan(&user)
+	err = db.QueryRowx(query, req.Username, hashedPassword, req.Role).StructScan(&user)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create user: %w", err)
 	}
@@ -72,7 +72,7 @@ func CreateUser(db *sqlx.DB, req models.CreateUserRequest) (*models.User, error)
 // GetUser retrieves a user by their ID
 func GetUser(db *sqlx.DB, userID int) (*models.User, error) {
 	var user models.User
-	query := `SELECT id, username, email, role, created_at FROM users WHERE id = $1`
+	query := `SELECT id, username, role, created_at FROM users WHERE id = $1`
 	err := db.Get(&user, query, userID)
 	if err != nil {
 		if err.Error() == "sql: no rows in result set" {
@@ -86,7 +86,7 @@ func GetUser(db *sqlx.DB, userID int) (*models.User, error) {
 // GetAllUsers retrieves all users from the database
 func GetAllUsers(db *sqlx.DB) ([]models.User, error) {
 	var users []models.User
-	query := `SELECT id, username, email, role, created_at FROM users ORDER BY username`
+	query := `SELECT id, username, role, created_at FROM users ORDER BY username`
 	err := db.Select(&users, query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get users: %w", err)
@@ -131,7 +131,7 @@ func VerifyCredentials(db *sqlx.DB, username, password string) (int, string, err
 		return 0, "", fmt.Errorf("invalid credentials")
 	}
 
-	return user.ID, user.Role, nil
+	return user.ID, string(user.Role), nil
 }
 
 // GetUserRole retrieves the role of a user by their ID

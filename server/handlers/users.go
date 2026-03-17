@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
+	"openiron-api/db"
 	"openiron-api/models"
 	"openiron-api/services"
 	"openiron-api/utils"
@@ -13,47 +14,41 @@ import (
 
 // CreateUser creates a new user account (admin only)
 func CreateUser(c *gin.Context) {
-	db := c.MustGet("db").(*sqlx.DB)
-
 	var req models.CreateUserRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid request data", err.Error())
 		return
 	}
 
-	user, err := services.CreateUser(db, req)
+	user, err := services.CreateUser(db.DB, req)
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to create user", err.Error())
 		return
 	}
 
-	utils.SuccessResponse(c, user)
+	utils.SuccessResponse(c, http.StatusCreated, user)
 }
 
 // ListUsers retrieves all users (admin only)
 func ListUsers(c *gin.Context) {
-	db := c.MustGet("db").(*sqlx.DB)
-
-	users, err := services.GetAllUsers(db)
+	users, err := services.GetAllUsers(db.DB)
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to retrieve users", err.Error())
 		return
 	}
 
-	utils.SuccessResponse(c, users)
+	utils.SuccessResponse(c, http.StatusOK, users)
 }
 
 // GetUser retrieves a specific user by ID (admin only)
 func GetUser(c *gin.Context) {
-	db := c.MustGet("db").(*sqlx.DB)
-
 	userID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid user ID", err.Error())
 		return
 	}
 
-	user, err := services.GetUser(db, userID)
+	user, err := services.GetUser(db.DB, userID)
 	if err != nil {
 		if err.Error() == "user not found" {
 			utils.ErrorResponse(c, http.StatusNotFound, "User not found", err.Error())
@@ -63,20 +58,18 @@ func GetUser(c *gin.Context) {
 		return
 	}
 
-	utils.SuccessResponse(c, user)
+	utils.SuccessResponse(c, http.StatusOK, user)
 }
 
 // DeleteUser removes a user account (admin only)
 func DeleteUser(c *gin.Context) {
-	db := c.MustGet("db").(*sqlx.DB)
-
 	userID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid user ID", err.Error())
 		return
 	}
 
-	err = services.DeleteUser(db, userID)
+	err = services.DeleteUser(db.DB, userID)
 	if err != nil {
 		if err.Error() == "user not found" {
 			utils.ErrorResponse(c, http.StatusNotFound, "User not found", err.Error())

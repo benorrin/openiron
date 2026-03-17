@@ -1,5 +1,4 @@
 CREATE INDEX idx_users_username ON users(username);
-CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_user_profiles_user_id ON user_profiles(user_id);
 CREATE INDEX idx_workouts_user_id ON workouts(user_id);
 CREATE INDEX idx_workouts_date ON workouts(date);

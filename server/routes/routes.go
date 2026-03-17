@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"openiron-api/handlers"
+	"openiron-api/middleware"
 )
 
 func SetupRoutes(router *gin.Engine) {

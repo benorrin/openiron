@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jmoiron/sqlx"
+	"openiron-api/db"
 	"openiron-api/middleware"
 	"openiron-api/models"
 	"openiron-api/services"
@@ -13,8 +13,6 @@ import (
 
 // Login authenticates a user and returns a JWT token
 func Login(c *gin.Context) {
-	db := c.MustGet("db").(*sqlx.DB)
-
 	var req models.LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid request data", err.Error())
@@ -22,7 +20,7 @@ func Login(c *gin.Context) {
 	}
 
 	// Verify credentials
-	userID, role, err := services.VerifyCredentials(db, req.Username, req.Password)
+	userID, role, err := services.VerifyCredentials(db.DB, req.Username, req.Password)
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusUnauthorized, "Invalid credentials", err.Error())
 		return
@@ -40,7 +38,7 @@ func Login(c *gin.Context) {
 		ExpiresAt: expiresAt,
 	}
 
-	utils.SuccessResponse(c, response)
+	utils.SuccessResponse(c, http.StatusOK, response)
 }
 
 // RefreshToken generates a new JWT token for an authenticated user
@@ -61,5 +59,5 @@ func RefreshToken(c *gin.Context) {
 		ExpiresAt: expiresAt,
 	}
 
-	utils.SuccessResponse(c, response)
+	utils.SuccessResponse(c, http.StatusOK, response)
 }

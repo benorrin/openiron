@@ -25,7 +25,7 @@ func GenerateToken(userID int, role string) (string, int64, error) {
 		jwtSecret = "your_jwt_secret_key" // Default for development
 	}
 
-	expirationTime := time.Now().Add(24 * time.Hour)
+	expirationTime := time.Now().Add(7 * 24 * time.Hour)
 	claims := &Claims{
 		UserID: userID,
 		Role:   role,
