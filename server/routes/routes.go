@@ -62,8 +62,15 @@ func setupAuthRoutes(router *gin.RouterGroup) {
 }
 
 func setupUserRoutes(router *gin.RouterGroup) {
-	// TODO: User profile management
-	// Profile updates, password changes, avatar uploads
+	users := router.Group("/users")
+	users.Use(middleware.AuthMiddleware())
+	{
+		users.GET("/me/profile", handlers.GetMyProfile)             // GET /api/v1/users/me/profile
+		users.PUT("/me/profile", handlers.UpdateMyProfile)          // PUT /api/v1/users/me/profile
+		users.POST("/me/profile/image", handlers.UploadProfileImage) // POST /api/v1/users/me/profile/image
+		users.POST("/me/change-password", handlers.ChangePassword)  // POST /api/v1/users/me/change-password
+		users.PUT("/:id/username", handlers.UpdateUsername)         // PUT /api/v1/users/:id/username (user or admin)
+	}
 }
 
 func setupExerciseRoutes(router *gin.RouterGroup) {
@@ -91,5 +98,7 @@ func setupAdminRoutes(router *gin.RouterGroup) {
 		admin.GET("/users/:id", handlers.GetUser)          // GET /api/v1/admin/users/:id
 		admin.DELETE("/users/:id", handlers.DeleteUser)    // DELETE /api/v1/admin/users/:id
 		admin.POST("/users/:id/reset-password", handlers.ResetPassword) // POST /api/v1/admin/users/:id/reset-password
+		admin.PUT("/users/:id/role", handlers.UpdateUserRole) // PUT /api/v1/admin/users/:id/role
+		admin.PUT("/users/:id/username", handlers.UpdateUsername) // PUT /api/v1/admin/users/:id/username
 	}
 }

@@ -78,6 +78,13 @@ func CreateUser(db *sqlx.DB, req models.CreateUserRequest) (*models.User, error)
 		return nil, fmt.Errorf("failed to create user: %w", err)
 	}
 
+	// Create default profile for the user
+	profileQuery := `INSERT INTO user_profiles (user_id, height, measurement_unit, created_at, updated_at) VALUES ($1, 0, 'metric', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`
+	_, err = db.Exec(profileQuery, user.ID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create user profile: %w", err)
+	}
+
 	return &user, nil
 }
 
@@ -188,4 +195,42 @@ func ChangePassword(db *sqlx.DB, userID int, oldPassword, newPassword string) er
 	}
 
 	return nil
+}
+
+// UpdateUserRole updates a user's role (admin only)
+func UpdateUserRole(db *sqlx.DB, userID int, newRole string) (*models.User, error) {
+	query := `UPDATE users SET role = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING id, username, role, created_at, updated_at`
+	var user models.User
+	err := db.QueryRowx(query, newRole, userID).StructScan(&user)
+	if err != nil {
+		if err.Error() == "sql: no rows in result set" {
+			return nil, fmt.Errorf("user not found")
+		}
+		return nil, fmt.Errorf("failed to update user role: %w", err)
+	}
+	return &user, nil
+}
+
+// UpdateUsername updates a user's username
+func UpdateUsername(db *sqlx.DB, userID int, newUsername string) (*models.User, error) {
+	// Check if new username is already taken
+	var count int
+	err := db.Get(&count, "SELECT COUNT(*) FROM users WHERE username = $1 AND id != $2", newUsername, userID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to check username availability: %w", err)
+	}
+	if count > 0 {
+		return nil, fmt.Errorf("username already exists")
+	}
+
+	query := `UPDATE users SET username = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING id, username, role, created_at, updated_at`
+	var user models.User
+	err = db.QueryRowx(query, newUsername, userID).StructScan(&user)
+	if err != nil {
+		if err.Error() == "sql: no rows in result set" {
+			return nil, fmt.Errorf("user not found")
+		}
+		return nil, fmt.Errorf("failed to update username: %w", err)
+	}
+	return &user, nil
 }

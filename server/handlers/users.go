@@ -107,19 +107,89 @@ func ResetPassword(c *gin.Context) {
 	c.JSON(http.StatusNoContent, gin.H{})
 }
 
-// GetMyProfile retrieves the current user's profile
-func GetMyProfile(c *gin.Context) {
-	// GET /api/v1/me (authenticated)
-}
-
-func UpdateMyProfile(c *gin.Context) {
-	// PUT /api/v1/me (authenticated)
-}
-
+// ChangePassword allows a user to change their own password
 func ChangePassword(c *gin.Context) {
-	// POST /api/v1/me/password (authenticated)
+	userID := c.MustGet("user_id").(int)
+
+	var req models.ChangePasswordRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid request data", err.Error())
+		return
+	}
+
+	err := services.ChangePassword(db.DB, userID, req.OldPassword, req.NewPassword)
+	if err != nil {
+		if err.Error() == "invalid old password" {
+			utils.ErrorResponse(c, http.StatusUnauthorized, "Invalid old password", "INVALID_OLD_PASSWORD")
+		} else {
+			utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to change password", err.Error())
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "password changed successfully"})
 }
 
-func UploadProfileImage(c *gin.Context) {
-	// POST /api/v1/me/profile-image (authenticated)
+// UpdateUserRole updates a user's role (admin only)
+func UpdateUserRole(c *gin.Context) {
+	userID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid user ID", err.Error())
+		return
+	}
+
+	var req models.UpdateUserRoleRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid request data", err.Error())
+		return
+	}
+
+	user, err := services.UpdateUserRole(db.DB, userID, req.Role)
+	if err != nil {
+		if err.Error() == "user not found" {
+			utils.ErrorResponse(c, http.StatusNotFound, "User not found", "USER_NOT_FOUND")
+		} else {
+			utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to update user role", err.Error())
+		}
+		return
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, user)
+}
+
+// UpdateUsername updates a user's username (admin can change any, user changes own)
+func UpdateUsername(c *gin.Context) {
+	userID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid user ID", err.Error())
+		return
+	}
+
+	// Check if user is trying to change their own username or if they're admin
+	currentUserID := c.MustGet("user_id").(int)
+	currentUserRole := c.MustGet("role").(string)
+	if currentUserID != userID && currentUserRole != "admin" {
+		utils.ErrorResponse(c, http.StatusForbidden, "Cannot change another user's username", "FORBIDDEN")
+		return
+	}
+
+	var req models.UpdateUsernameRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.ErrorResponse(c, http.StatusBadRequest, "Invalid request data", err.Error())
+		return
+	}
+
+	user, err := services.UpdateUsername(db.DB, userID, req.Username)
+	if err != nil {
+		if err.Error() == "user not found" {
+			utils.ErrorResponse(c, http.StatusNotFound, "User not found", "USER_NOT_FOUND")
+		} else if err.Error() == "username already exists" {
+			utils.ErrorResponse(c, http.StatusConflict, "Username already taken", "USERNAME_TAKEN")
+		} else {
+			utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to update username", err.Error())
+		}
+		return
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, user)
 }
