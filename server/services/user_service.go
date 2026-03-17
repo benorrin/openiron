@@ -2,13 +2,51 @@ package services
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/jmoiron/sqlx"
 	"openiron-api/models"
 	"openiron-api/utils"
 )
-func CreateAdminIfNotExists() error {
-	// Check if any admin exists, create default admin if not
+
+// CreateAdminIfNotExists creates a default admin user if no admin exists
+func CreateAdminIfNotExists(db *sqlx.DB) error {
+	// Check if any admin user exists
+	var count int
+	err := db.Get(&count, "SELECT COUNT(*) FROM users WHERE role = 'admin'")
+	if err != nil {
+		return fmt.Errorf("failed to check for admin users: %w", err)
+	}
+
+	// If admin exists, do nothing
+	if count > 0 {
+		return nil
+	}
+
+	// Get admin credentials from environment
+	adminUsername := os.Getenv("ADMIN_USERNAME")
+	adminPassword := os.Getenv("ADMIN_PASSWORD")
+
+	if adminUsername == "" {
+		adminUsername = "admin"
+	}
+	if adminPassword == "" {
+		adminPassword = "admin_password_change_this"
+	}
+
+	// Hash the password
+	hashedPassword, err := utils.HashPassword(adminPassword)
+	if err != nil {
+		return fmt.Errorf("failed to hash admin password: %w", err)
+	}
+
+	// Create the admin user
+	query := `INSERT INTO users (username, password_hash, role, created_at) VALUES ($1, $2, 'admin', CURRENT_TIMESTAMP)`
+	_, err = db.Exec(query, adminUsername, hashedPassword)
+	if err != nil {
+		return fmt.Errorf("failed to create admin user: %w", err)
+	}
+
 	return nil
 }
 
