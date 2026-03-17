@@ -1,0 +1,11 @@
+CREATE INDEX idx_users_username ON users(username);
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_user_profiles_user_id ON user_profiles(user_id);
+CREATE INDEX idx_workouts_user_id ON workouts(user_id);
+CREATE INDEX idx_workouts_date ON workouts(date);
+CREATE INDEX idx_workout_exercises_workout_id ON workout_exercises(workout_id);
+CREATE INDEX idx_workout_exercises_exercise_id ON workout_exercises(exercise_id);
+CREATE INDEX idx_body_metrics_user_id ON body_metrics(user_id);
+CREATE INDEX idx_body_metrics_date ON body_metrics(date);
+CREATE INDEX idx_body_metric_values_body_metric_id ON body_metric_values(body_metric_id);
+CREATE INDEX idx_body_metric_photos_body_metric_id ON body_metric_photos(body_metric_id);

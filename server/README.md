@@ -1,4 +1,4 @@
-# OpenIron
+# OpenIron - Self-Hosted Gym Tracker
 
 A lightweight, self-hosted web application for tracking workouts, logging body metrics, and monitoring fitness progress. Perfect for homelab enthusiasts who want full control over their fitness data.
 
