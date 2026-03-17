@@ -46,8 +46,10 @@ func SetupRoutes(router *gin.Engine) {
 }
 
 func setupAuthRoutes(router *gin.RouterGroup) {
-	// TODO: Implement authentication endpoints
-	// Login, refresh token, etc.
+	auth := router.Group("/auth")
+	{
+		auth.POST("/login", handlers.Login) // POST /api/v1/auth/login
+	}
 }
 
 func setupUserRoutes(router *gin.RouterGroup) {

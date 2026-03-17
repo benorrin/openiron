@@ -1,6 +1,12 @@
 package services
 
-// CreateAdminIfNotExists creates a default admin user if no admin exists
+import (
+	"fmt"
+
+	"github.com/jmoiron/sqlx"
+	"openiron-api/models"
+	"openiron-api/utils"
+)
 func CreateAdminIfNotExists() error {
 	// Check if any admin exists, create default admin if not
 	return nil
@@ -31,9 +37,23 @@ func DeleteUser(userID int) error {
 }
 
 // VerifyCredentials checks username/password and returns user ID and role
-func VerifyCredentials(username, password string) (int, string, error) {
-	// Verify username/password and return user ID and role
-	return 0, "", nil
+func VerifyCredentials(db *sqlx.DB, username, password string) (int, string, error) {
+	var user models.User
+	query := `SELECT id, username, password_hash, role FROM users WHERE username = $1`
+	err := db.Get(&user, query, username)
+	if err != nil {
+		if err.Error() == "sql: no rows in result set" {
+			return 0, "", fmt.Errorf("invalid credentials")
+		}
+		return 0, "", fmt.Errorf("database error: %w", err)
+	}
+
+	// Verify password
+	if !utils.VerifyPassword(user.PasswordHash, password) {
+		return 0, "", fmt.Errorf("invalid credentials")
+	}
+
+	return user.ID, user.Role, nil
 }
 
 // GetUserRole retrieves the role of a user by their ID
