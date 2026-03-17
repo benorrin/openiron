@@ -80,6 +80,14 @@ func setupWorkoutRoutes(router *gin.RouterGroup) {
 }
 
 func setupAdminRoutes(router *gin.RouterGroup) {
-	// TODO: Admin user management
-	// Create users, manage accounts, reset passwords
+	admin := router.Group("/admin")
+	admin.Use(middleware.AuthMiddleware())
+	admin.Use(middleware.AdminMiddleware())
+	{
+		admin.POST("/users", handlers.CreateUser)          // POST /api/v1/admin/users
+		admin.GET("/users", handlers.ListUsers)            // GET /api/v1/admin/users
+		admin.GET("/users/:id", handlers.GetUser)          // GET /api/v1/admin/users/:id
+		admin.DELETE("/users/:id", handlers.DeleteUser)    // DELETE /api/v1/admin/users/:id
+		admin.POST("/users/:id/reset-password", handlers.ResetPassword) // POST /api/v1/admin/users/:id/reset-password
+	}
 }

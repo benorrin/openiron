@@ -22,6 +22,11 @@ type ChangePasswordRequest struct {
 	NewPassword string `json:"new_password" binding:"required,min=6"`
 }
 
+// ResetPasswordRequest for admin resetting user passwords
+type ResetPasswordRequest struct {
+	NewPassword string `json:"new_password" binding:"required,min=6"`
+}
+
 // ErrorResponse standard error format
 type ErrorResponse struct {
 	Error  string `json:"error"`

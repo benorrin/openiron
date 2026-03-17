@@ -51,26 +51,66 @@ func CreateAdminIfNotExists(db *sqlx.DB) error {
 }
 
 // CreateUser creates a new user account
-func CreateUser(username, email, password, role string) error {
-	// Create user with validation
-	return nil
+func CreateUser(db *sqlx.DB, req models.CreateUserRequest) (*models.User, error) {
+	// Hash the password
+	hashedPassword, err := utils.HashPassword(req.Password)
+	if err != nil {
+		return nil, fmt.Errorf("failed to hash password: %w", err)
+	}
+
+	// Create the user
+	query := `INSERT INTO users (username, email, password_hash, role, created_at) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP) RETURNING id, username, email, role, created_at`
+	var user models.User
+	err = db.QueryRowx(query, req.Username, req.Email, hashedPassword, req.Role).StructScan(&user)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create user: %w", err)
+	}
+
+	return &user, nil
 }
 
 // GetUser retrieves a user by their ID
-func GetUser(userID int) error {
-	// Get user by ID
-	return nil
+func GetUser(db *sqlx.DB, userID int) (*models.User, error) {
+	var user models.User
+	query := `SELECT id, username, email, role, created_at FROM users WHERE id = $1`
+	err := db.Get(&user, query, userID)
+	if err != nil {
+		if err.Error() == "sql: no rows in result set" {
+			return nil, fmt.Errorf("user not found")
+		}
+		return nil, fmt.Errorf("failed to get user: %w", err)
+	}
+	return &user, nil
 }
 
 // GetAllUsers retrieves all users from the database
-func GetAllUsers() error {
-	// Get all users
-	return nil
+func GetAllUsers(db *sqlx.DB) ([]models.User, error) {
+	var users []models.User
+	query := `SELECT id, username, email, role, created_at FROM users ORDER BY username`
+	err := db.Select(&users, query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get users: %w", err)
+	}
+	return users, nil
 }
 
 // DeleteUser removes a user from the database
-func DeleteUser(userID int) error {
-	// Delete user by ID
+func DeleteUser(db *sqlx.DB, userID int) error {
+	query := `DELETE FROM users WHERE id = $1`
+	result, err := db.Exec(query, userID)
+	if err != nil {
+		return fmt.Errorf("failed to delete user: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("failed to get rows affected: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("user not found")
+	}
+
 	return nil
 }
 
@@ -101,7 +141,39 @@ func GetUserRole(userID int) (string, error) {
 }
 
 // ChangePassword updates a user's password
-func ChangePassword(userID int, oldPassword, newPassword string) error {
-	// Change user password
+func ChangePassword(db *sqlx.DB, userID int, oldPassword, newPassword string) error {
+	// First verify the old password
+	var user models.User
+	query := `SELECT password_hash FROM users WHERE id = $1`
+	err := db.Get(&user, query, userID)
+	if err != nil {
+		if err.Error() == "sql: no rows in result set" {
+			return fmt.Errorf("user not found")
+		}
+		return fmt.Errorf("failed to get user: %w", err)
+	}
+
+	// For admin password reset, we skip old password verification
+	// (admin can reset any user's password without knowing old password)
+	// If oldPassword is provided, verify it matches
+	if oldPassword != "" {
+		if !utils.VerifyPassword(user.PasswordHash, oldPassword) {
+			return fmt.Errorf("invalid old password")
+		}
+	}
+
+	// Hash the new password
+	hashedPassword, err := utils.HashPassword(newPassword)
+	if err != nil {
+		return fmt.Errorf("failed to hash new password: %w", err)
+	}
+
+	// Update the password
+	updateQuery := `UPDATE users SET password_hash = $1 WHERE id = $2`
+	_, err = db.Exec(updateQuery, hashedPassword, userID)
+	if err != nil {
+		return fmt.Errorf("failed to update password: %w", err)
+	}
+
 	return nil
 }
