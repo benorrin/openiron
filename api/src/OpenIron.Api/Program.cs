@@ -13,9 +13,9 @@ var builder = WebApplication.CreateBuilder(args);
 var useSqlite = string.Equals(builder.Configuration["Database:Provider"], "Sqlite", StringComparison.OrdinalIgnoreCase);
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    var connectionString = builder.Configuration.GetConnectionString("Default");
-    if (useSqlite) options.UseSqlite(connectionString ?? "Data Source=openiron.db");
-    else options.UseNpgsql(connectionString);
+    // The SQLite file has its own setting so it never inherits the PostgreSQL connection string.
+    if (useSqlite) options.UseSqlite(builder.Configuration["Database:SqliteConnection"] ?? "Data Source=openiron.db");
+    else options.UseNpgsql(builder.Configuration.GetConnectionString("Default"));
 });
 
 builder.Services.AddOptions<JwtOptions>()
