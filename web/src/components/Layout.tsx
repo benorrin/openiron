@@ -6,7 +6,7 @@ const links = [
   { to: '/workouts', label: 'Workouts' },
   { to: '/templates', label: 'Templates' },
   { to: '/progress', label: 'Progress' },
-  { to: '/body-weight', label: 'Body weight' },
+  { to: '/body-weight', label: 'Weight' },
 ]
 
 export function Layout() {

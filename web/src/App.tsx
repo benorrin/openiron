@@ -1,10 +1,12 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { useAuth } from './auth/useAuth'
 import { Layout } from './components/Layout'
+import { BodyWeightPage } from './pages/BodyWeightPage'
 import { HomePage } from './pages/HomePage'
 import { LoginPage } from './pages/LoginPage'
 import { WorkoutEditPage } from './pages/WorkoutEditPage'
 import { WorkoutsPage } from './pages/WorkoutsPage'
+import { ProgressPage } from './pages/ProgressPage'
 import { TemplateEditPage } from './pages/TemplateEditPage'
 import { TemplatesPage } from './pages/TemplatesPage'
 
@@ -24,6 +26,8 @@ export function App() {
         <Route path="workouts" element={<WorkoutsPage />} />
         <Route path="workouts/new" element={<WorkoutEditPage />} />
         <Route path="workouts/:id" element={<WorkoutEditPage />} />
+        <Route path="progress" element={<ProgressPage />} />
+        <Route path="body-weight" element={<BodyWeightPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

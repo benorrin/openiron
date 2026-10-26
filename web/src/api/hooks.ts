@@ -1,6 +1,18 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from './client'
-import type { Exercise, Template, TemplateInput, Workout, WorkoutDraft, WorkoutInput, WorkoutSummary } from './types'
+import type {
+  BodyWeightEntry,
+  Exercise,
+  ExerciseProgress,
+  Overview,
+  ProgressExercise,
+  Template,
+  TemplateInput,
+  Workout,
+  WorkoutDraft,
+  WorkoutInput,
+  WorkoutSummary,
+} from './types'
 
 export function useExercises() {
   return useQuery({ queryKey: ['exercises'], queryFn: () => api<Exercise[]>('/exercises') })
@@ -94,4 +106,53 @@ export function useDeleteWorkout() {
         queryClient.invalidateQueries({ queryKey: ['progress'] }),
       ]),
   })
+}
+
+export function useBodyWeight() {
+  return useQuery({ queryKey: ['body-weight'], queryFn: () => api<BodyWeightEntry[]>('/body-weight') })
+}
+
+export function useLogBodyWeight() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (input: { date: string; weightKg: number }) =>
+      api<BodyWeightEntry>('/body-weight', { method: 'POST', body: input }),
+    onSuccess: () =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['body-weight'] }),
+        queryClient.invalidateQueries({ queryKey: ['progress', 'overview'] }),
+      ]),
+  })
+}
+
+export function useDeleteBodyWeight() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => api<void>(`/body-weight/${id}`, { method: 'DELETE' }),
+    onSuccess: () =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['body-weight'] }),
+        queryClient.invalidateQueries({ queryKey: ['progress', 'overview'] }),
+      ]),
+  })
+}
+
+export function useProgressExercises() {
+  return useQuery({
+    queryKey: ['progress', 'exercises'],
+    queryFn: () => api<ProgressExercise[]>('/progress/exercises'),
+  })
+}
+
+export function useExerciseProgress(exerciseId: string | undefined) {
+  return useQuery({
+    queryKey: ['progress', 'exercise', exerciseId],
+    queryFn: () => api<ExerciseProgress>(`/progress/exercises/${exerciseId}`),
+    enabled: exerciseId !== undefined,
+    placeholderData: (previous) => previous,
+  })
+}
+
+export function useOverview() {
+  return useQuery({ queryKey: ['progress', 'overview'], queryFn: () => api<Overview>('/progress/overview?weeks=12') })
 }
