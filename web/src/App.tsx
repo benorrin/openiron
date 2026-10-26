@@ -2,10 +2,12 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { useAuth } from './auth/useAuth'
 import { Layout } from './components/Layout'
 import { PageSkeleton } from './components/Skeleton'
+import { ActivityPage } from './pages/ActivityPage'
 import { AdminPage } from './pages/AdminPage'
 import { BodyWeightPage } from './pages/BodyWeightPage'
 import { CommunityPage } from './pages/CommunityPage'
 import { CommunityProfilePage } from './pages/CommunityProfilePage'
+import { ConsistencyPage } from './pages/ConsistencyPage'
 import { HomePage } from './pages/HomePage'
 import { NutritionPage } from './pages/NutritionPage'
 import { LoginPage } from './pages/LoginPage'
@@ -33,6 +35,8 @@ export function App() {
         <Route path="workouts/new" element={<WorkoutEditPage />} />
         <Route path="workouts/:id" element={<WorkoutEditPage />} />
         <Route path="progress" element={<ProgressPage />} />
+        <Route path="consistency" element={<ConsistencyPage />} />
+        <Route path="activity" element={<ActivityPage />} />
         <Route path="body-weight" element={<BodyWeightPage />} />
         <Route path="nutrition" element={<NutritionPage />} />
         <Route path="community" element={<CommunityPage />} />

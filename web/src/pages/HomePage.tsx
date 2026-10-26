@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
+import { useConsistency } from '../api/consistency'
 import { useOverview, useTemplates, useWorkouts } from '../api/hooks'
 import { BarChart } from '../components/charts/BarChart'
+import { WeekCard } from './ConsistencyPage'
 import { formatDate, formatKg, formatShortDate, formatVolume } from '../lib/format'
 import { PageSkeleton } from '../components/Skeleton'
 import { useState } from 'react'
@@ -16,6 +18,7 @@ export function HomePage() {
   const { user } = useAuth()
   const [hello] = useState(greeting)
   const { data: overview, isLoading } = useOverview()
+  const { data: consistency } = useConsistency()
   const { data: templates = [] } = useTemplates()
   const { data: workouts = [] } = useWorkouts()
 
@@ -69,6 +72,8 @@ export function HomePage() {
           </div>
         </div>
       </div>
+
+      {consistency && <WeekCard data={consistency} compact />}
 
       <section className="card">
         <div className="card-title">

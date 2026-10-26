@@ -17,9 +17,11 @@ interface NavItem {
 
 const links: NavItem[] = [
   { to: '/', label: 'Home', icon: 'home', end: true },
-  { to: '/workouts', label: 'Workouts', icon: 'dumbbell' },
+  { to: '/workouts', label: 'Workouts', icon: 'dumbbell', alsoActiveOn: ['/activity'] },
+  { to: '/activity', label: 'Activity', icon: 'pulse', sidebarOnly: true },
   { to: '/templates', label: 'Templates', icon: 'clipboard' },
-  { to: '/progress', label: 'Progress', icon: 'trending' },
+  { to: '/progress', label: 'Progress', icon: 'trending', alsoActiveOn: ['/consistency'] },
+  { to: '/consistency', label: 'Consistency', icon: 'grid', sidebarOnly: true },
   { to: '/body-weight', label: 'Weight', icon: 'scale', tabLabel: 'Body', alsoActiveOn: ['/nutrition'] },
   { to: '/nutrition', label: 'Nutrition', icon: 'flame', sidebarOnly: true },
   { to: '/community', label: 'Community', icon: 'users' },

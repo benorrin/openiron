@@ -99,6 +99,7 @@ export function useSaveWorkout(id: string | undefined) {
       Promise.all([
         queryClient.invalidateQueries({ queryKey: ['workouts'] }),
         queryClient.invalidateQueries({ queryKey: ['progress'] }),
+        queryClient.invalidateQueries({ queryKey: ['consistency'] }),
       ]),
   })
 }
@@ -111,6 +112,7 @@ export function useDeleteWorkout() {
       Promise.all([
         queryClient.invalidateQueries({ queryKey: ['workouts'] }),
         queryClient.invalidateQueries({ queryKey: ['progress'] }),
+        queryClient.invalidateQueries({ queryKey: ['consistency'] }),
       ]),
   })
 }

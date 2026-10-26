@@ -6,6 +6,7 @@ import { LineChart } from '../components/charts/LineChart'
 import { RangeFilter } from '../components/RangeFilter'
 import { RANGES, withinRange } from '../lib/range'
 import { formatDate, formatKg, formatShortDate, formatVolume } from '../lib/format'
+import { ProgressTabs } from '../components/SectionTabs'
 import { PageSkeleton } from '../components/Skeleton'
 import { EmptyState } from '../components/EmptyState'
 import { Icon } from '../components/Icon'
@@ -24,7 +25,8 @@ export function ProgressPage() {
   if (!exercises || exercises.length === 0) {
     return (
       <div className="page">
-        <h1>Progress</h1>
+        <ProgressTabs />
+      <h1>Progress</h1>
         <EmptyState
           icon="trending"
           title="No progress to chart yet"
@@ -46,6 +48,7 @@ export function ProgressPage() {
 
   return (
     <div className="page">
+      <ProgressTabs />
       <h1>Progress</h1>
 
       <div className="row">

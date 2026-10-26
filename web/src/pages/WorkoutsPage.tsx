@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useTemplates, useWorkouts } from '../api/hooks'
 import { formatDate, formatVolume } from '../lib/format'
+import { TrainingTabs } from '../components/SectionTabs'
 import { PageSkeleton } from '../components/Skeleton'
 import { EmptyState } from '../components/EmptyState'
 
@@ -11,6 +12,7 @@ export function WorkoutsPage() {
 
   return (
     <div className="page">
+      <TrainingTabs />
       <div className="page-header">
         <h1>Workouts</h1>
         <div className="row">
