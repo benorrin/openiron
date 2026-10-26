@@ -16,6 +16,7 @@ I created OpenIron when I became frustrated with the lack of decent fitness trac
 - **Workout logging** - start from a template and the weights from your last session are pre-filled, or log an empty workout.
 - **Progress charts** - estimated 1RM, top set weight and volume per exercise, weekly training volume, and personal records.
 - **Body weight** - log weigh-ins and chart the trend over 30 days, 90 days, a year, or all time.
+- **Community** - opt in to share your training with other people on the same server, and see theirs: workouts and volume over the last 30 days, weekly volume, main lifts and recent workouts. Sharing is off by default, body weight and notes are never shared, and non-sharing users are indistinguishable from users who don't exist.
 
 Weights are in kilograms.
 
@@ -53,6 +54,8 @@ npm install
 npm run dev
 ```
 
+The SQLite database is created from the current model and is never migrated. If you pull a change that alters the schema and the API starts failing with `no such column` errors, stop it and delete `api/src/OpenIron.Api/openiron.db`.
+
 To develop against PostgreSQL instead, start `postgres` from the compose file and run the API without `Database__Provider`; the default connection string in `appsettings.Development.json` matches `docker compose`'s database when `POSTGRES_PASSWORD=openiron_dev_password`.
 
 ### Tests
@@ -85,6 +88,8 @@ All routes are under `/api`. Everything except register and login needs an `Auth
 | `GET/POST /workouts`, `GET/PUT/DELETE /workouts/{id}` | Logged workouts |
 | `GET /workouts/draft/{templateId}` | A template pre-filled with your last-used weights |
 | `GET/POST /body-weight`, `DELETE /body-weight/{id}` | Body weight (one entry per day; logging a day again replaces it) |
+| `GET/PUT /community/settings` | Whether you share your activity (default off) |
+| `GET /community/users`, `GET /community/users/{username}` | Members who share, and one member's general progress |
 | `GET /progress/exercises`, `GET /progress/exercises/{id}`, `GET /progress/overview` | Chart and dashboard data |
 
 ## License
