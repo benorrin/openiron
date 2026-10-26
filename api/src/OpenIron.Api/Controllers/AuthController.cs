@@ -16,12 +16,12 @@ public class AuthController(AppDbContext db, TokenService tokens, IPasswordHashe
     /// <summary>Public, so the login page knows whether to offer account creation.</summary>
     [HttpGet("config")]
     public async Task<AuthConfigDto> Config() =>
-        new((await db.ServerSettings.AsNoTracking().FirstAsync()).RegistrationOpen);
+        new((await db.ServerSettings.AsNoTracking().SingleAsync()).RegistrationOpen);
 
     [HttpPost("register")]
     public async Task<ActionResult<AuthResponse>> Register(RegisterRequest request)
     {
-        if (!(await db.ServerSettings.AsNoTracking().FirstAsync()).RegistrationOpen)
+        if (!(await db.ServerSettings.AsNoTracking().SingleAsync()).RegistrationOpen)
             return StatusCode(StatusCodes.Status403Forbidden, new ProblemDetails { Title = "Registration is closed on this server." });
 
         var normalized = request.Username.ToLowerInvariant();

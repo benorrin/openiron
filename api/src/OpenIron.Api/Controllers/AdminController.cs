@@ -30,7 +30,7 @@ public class AdminController(AppDbContext db, IPasswordHasher<User> hasher, Acco
             await db.Users.CountAsync(u => u.IsDisabled),
             await db.Workouts.CountAsync(),
             await db.Workouts.CountAsync(w => w.PerformedAt >= since),
-            (await db.ServerSettings.AsNoTracking().FirstAsync()).RegistrationOpen);
+            (await db.ServerSettings.AsNoTracking().SingleAsync()).RegistrationOpen);
     }
 
     [HttpGet("users")]
@@ -95,12 +95,12 @@ public class AdminController(AppDbContext db, IPasswordHasher<User> hasher, Acco
 
     [HttpGet("settings")]
     public async Task<AdminSettingsDto> GetSettings() =>
-        new((await db.ServerSettings.AsNoTracking().FirstAsync()).RegistrationOpen);
+        new((await db.ServerSettings.AsNoTracking().SingleAsync()).RegistrationOpen);
 
     [HttpPut("settings")]
     public async Task<AdminSettingsDto> UpdateSettings(AdminSettingsDto request)
     {
-        var settings = await db.ServerSettings.FirstAsync();
+        var settings = await db.ServerSettings.SingleAsync();
         settings.RegistrationOpen = request.RegistrationOpen;
         await db.SaveChangesAsync();
         return new AdminSettingsDto(settings.RegistrationOpen);
