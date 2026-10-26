@@ -425,3 +425,23 @@ a:focus-visible {
   color: var(--ink);
   box-shadow: 0 1px 2px var(--border);
 }
+
+/* Workout logging */
+
+.set-row {
+  flex-wrap: nowrap;
+}
+
+.set-num {
+  width: 1.5rem;
+  text-align: center;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
