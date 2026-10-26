@@ -3,6 +3,8 @@ import { useAuth } from './auth/useAuth'
 import { Layout } from './components/Layout'
 import { HomePage } from './pages/HomePage'
 import { LoginPage } from './pages/LoginPage'
+import { TemplateEditPage } from './pages/TemplateEditPage'
+import { TemplatesPage } from './pages/TemplatesPage'
 
 export function App() {
   const { user, loading } = useAuth()
@@ -14,6 +16,9 @@ export function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<HomePage />} />
+        <Route path="templates" element={<TemplatesPage />} />
+        <Route path="templates/new" element={<TemplateEditPage />} />
+        <Route path="templates/:id" element={<TemplateEditPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
