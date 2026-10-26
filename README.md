@@ -16,6 +16,8 @@ I created OpenIron when I became frustrated with the lack of decent fitness trac
 - **Workout logging** - start from a template and the weights from your last session are pre-filled, or log an empty workout.
 - **Progress charts** - estimated 1RM, top set weight and volume per exercise, weekly training volume, and personal records.
 - **Body weight** - log weigh-ins and chart the trend over 30 days, 90 days, a year, or all time.
+- **Consistency** - set the weekdays you train (optionally with a template for each) and see how you're keeping to them: this week at a glance, a streak, weekly adherence, and a GitHub-style heatmap of the last year.
+- **Activity** - log walks, runs, treadmill, cycling, swims, hikes and other sessions, plus daily steps against a goal. They count toward your consistency alongside your workouts.
 - **Calorie calculator** - a daily calorie and macro target from your profile and goal (lose, maintain or gain). It then watches your weigh-ins: it smooths them into a trend, compares your real rate of change with your goal, re-estimates your actual maintenance calories, and tells you whether you're on track or should adjust. See below.
 - **Settings** - change your password, choose whether to share your training, or delete your account and all your data.
 - **Admin panel** - for admins: see who has an account, grant or revoke admin, disable or enable users, reset a password, delete a user, and open or close registration, and create single-use invite codes. Admins see workout counts only, never anyone's training or body weight.
@@ -31,6 +33,14 @@ Weights are in kilograms.
 | `web/` | React + TypeScript single-page app built with Vite. Charts are hand-rolled SVG. |
 
 In Docker the web container serves the app and proxies `/api` to the API container, so the browser talks to a single origin.
+
+## How consistency is measured
+
+- **An active day** has a logged workout, a logged activity, or steps at or over your step goal. Each of those is a session: the heatmap shades a day by how many it has (up to four).
+- **A scheduled day is done** when it is active. The template you planned for it is a prompt, not a requirement.
+- **Fairness:** days before you set the schedule (or before your account existed) are never counted as missed, and today only counts once you've done something, so an unfinished day never hurts you. Changing which weekdays you train on restarts the measurement from that day; changing only a template or the step goal doesn't.
+- **Streaks** count scheduled days in a row. Rest days don't break one, a missed scheduled day does.
+- **Your own calendar:** days follow the browser's time zone (it sends its UTC offset), so an evening workout is counted on the day you did it.
 
 ## How the calorie calculator works
 
@@ -111,6 +121,9 @@ All routes are under `/api`. Everything except register and login needs an `Auth
 | `GET/POST /workouts`, `GET/PUT/DELETE /workouts/{id}` | Logged workouts |
 | `GET /workouts/draft/{templateId}` | A template pre-filled with your last-used weights |
 | `GET/POST /body-weight`, `DELETE /body-weight/{id}` | Body weight (one entry per day; logging a day again replaces it) |
+| `GET/POST /activities`, `PUT/DELETE /activities/{id}` | Walks, runs, treadmill and other sessions, and daily step counts (one per day) |
+| `GET/PUT /schedule` | The weekly training schedule and the daily step goal |
+| `GET /consistency?tz=` | This week against the plan, streaks, weekly adherence and the yearly heatmap |
 | `GET /nutrition`, `PUT /nutrition/settings`, `POST /nutrition/apply`, `DELETE /nutrition/apply` | Calorie plan: profile and goal, the target you're following, and the check on your progress |
 | `PUT /account/password`, `POST /account/delete` | Change your password, delete your account |
 | `GET /auth/config` | Public: whether anyone can register (otherwise sign-up needs an invite code) |
