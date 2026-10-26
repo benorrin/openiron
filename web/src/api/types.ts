@@ -136,3 +136,35 @@ export interface Overview {
   bodyWeightChangeKg: number | null
   weeks: WeeklyActivity[]
 }
+
+export interface CommunityMember {
+  username: string
+  isYou: boolean
+  totalWorkouts: number
+  workoutsLast30Days: number
+  volumeLast30DaysKg: number
+  lastWorkoutAt: string | null
+}
+
+export interface TopLift {
+  exerciseName: string
+  muscleGroup: string
+  heaviestWeightKg: number
+  best1RmKg: number
+  sessions: number
+}
+
+export interface RecentWorkout {
+  name: string
+  performedAt: string
+  exerciseCount: number
+  setCount: number
+  totalVolumeKg: number
+}
+
+export interface CommunityProfile {
+  member: CommunityMember
+  weeks: WeeklyActivity[]
+  topLifts: TopLift[]
+  recentWorkouts: RecentWorkout[]
+}

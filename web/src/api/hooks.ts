@@ -2,6 +2,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from './client'
 import type {
   BodyWeightEntry,
+  CommunityMember,
+  CommunityProfile,
   Exercise,
   ExerciseProgress,
   Overview,
@@ -155,4 +157,32 @@ export function useExerciseProgress(exerciseId: string | undefined) {
 
 export function useOverview() {
   return useQuery({ queryKey: ['progress', 'overview'], queryFn: () => api<Overview>('/progress/overview?weeks=12') })
+}
+
+export function useCommunitySettings() {
+  return useQuery({
+    queryKey: ['community', 'settings'],
+    queryFn: () => api<{ shareActivity: boolean }>('/community/settings'),
+  })
+}
+
+export function useUpdateCommunitySettings() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (shareActivity: boolean) =>
+      api<{ shareActivity: boolean }>('/community/settings', { method: 'PUT', body: { shareActivity } }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['community'] }),
+  })
+}
+
+export function useCommunityMembers() {
+  return useQuery({ queryKey: ['community', 'users'], queryFn: () => api<CommunityMember[]>('/community/users') })
+}
+
+export function useCommunityProfile(username: string | undefined) {
+  return useQuery({
+    queryKey: ['community', 'users', username],
+    queryFn: () => api<CommunityProfile>(`/community/users/${encodeURIComponent(username!)}`),
+    enabled: username !== undefined,
+  })
 }

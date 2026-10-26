@@ -12,7 +12,7 @@ namespace OpenIron.Api.Controllers;
 [ApiController]
 [Authorize]
 [Route("api/progress")]
-public class ProgressController(AppDbContext db) : ControllerBase
+public class ProgressController(AppDbContext db, ActivityService activity) : ControllerBase
 {
     /// <summary>Exercises the user has actually logged, most recently used first.</summary>
     [HttpGet("exercises")]
@@ -65,23 +65,17 @@ public class ProgressController(AppDbContext db) : ControllerBase
         var userId = User.GetUserId();
         var now = DateTime.UtcNow;
 
-        var workouts = await db.Workouts.AsNoTracking()
-            .Where(w => w.UserId == userId)
-            .Select(w => new
-            {
-                w.PerformedAt,
-                Sets = w.Exercises.SelectMany(e => e.Sets).Select(s => new { s.Reps, s.WeightKg }).ToList(),
-            })
-            .ToListAsync();
+        var workouts = await activity.LoadWorkoutsAsync([userId]);
+        var summary = ProgressCalculator.Summarise(workouts, now);
 
         var weights = await db.BodyWeightEntries.AsNoTracking()
             .Where(e => e.UserId == userId).OrderBy(e => e.Date).Select(e => e.WeightKg).ToListAsync();
 
         return new OverviewDto(
-            workouts.Count,
-            workouts.Count(w => w.PerformedAt >= now.AddDays(-30)),
+            summary.TotalWorkouts,
+            summary.WorkoutsLast30Days,
             weights.Count > 0 ? weights[^1] : null,
             weights.Count > 1 ? Math.Round(weights[^1] - weights[0], 1) : null,
-            ProgressCalculator.Weekly(workouts.Select(w => (w.PerformedAt, w.Sets.Sum(s => s.Reps * s.WeightKg))), now, weeks));
+            ProgressCalculator.Weekly(workouts.Select(w => (w.PerformedAt, w.VolumeKg)), now, weeks));
     }
 }
