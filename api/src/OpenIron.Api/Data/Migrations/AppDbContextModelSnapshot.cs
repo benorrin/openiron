@@ -22,6 +22,46 @@ namespace OpenIron.Api.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("OpenIron.Api.Data.Entities.ActivityEntry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<double?>("DistanceKm")
+                        .HasColumnType("double precision");
+
+                    b.Property<int?>("DurationMinutes")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<int?>("Steps")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "Date");
+
+                    b.ToTable("Activities");
+                });
+
             modelBuilder.Entity("OpenIron.Api.Data.Entities.BodyWeightEntry", b =>
                 {
                     b.Property<Guid>("Id")
@@ -43,6 +83,22 @@ namespace OpenIron.Api.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("BodyWeightEntries");
+                });
+
+            modelBuilder.Entity("OpenIron.Api.Data.Entities.ConsistencySettings", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("ScheduleSince")
+                        .HasColumnType("date");
+
+                    b.Property<int>("StepGoal")
+                        .HasColumnType("integer");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("ConsistencySettings");
                 });
 
             modelBuilder.Entity("OpenIron.Api.Data.Entities.Exercise", b =>
@@ -160,6 +216,24 @@ namespace OpenIron.Api.Data.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("NutritionSettings");
+                });
+
+            modelBuilder.Entity("OpenIron.Api.Data.Entities.ScheduledDay", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("DayOfWeek")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("WorkoutTemplateId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("UserId", "DayOfWeek");
+
+                    b.HasIndex("WorkoutTemplateId");
+
+                    b.ToTable("ScheduledDays");
                 });
 
             modelBuilder.Entity("OpenIron.Api.Data.Entities.ServerSettings", b =>
@@ -361,11 +435,29 @@ namespace OpenIron.Api.Data.Migrations
                     b.ToTable("WorkoutTemplates");
                 });
 
+            modelBuilder.Entity("OpenIron.Api.Data.Entities.ActivityEntry", b =>
+                {
+                    b.HasOne("OpenIron.Api.Data.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("OpenIron.Api.Data.Entities.BodyWeightEntry", b =>
                 {
                     b.HasOne("OpenIron.Api.Data.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("OpenIron.Api.Data.Entities.ConsistencySettings", b =>
+                {
+                    b.HasOne("OpenIron.Api.Data.Entities.User", null)
+                        .WithOne()
+                        .HasForeignKey("OpenIron.Api.Data.Entities.ConsistencySettings", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -398,6 +490,20 @@ namespace OpenIron.Api.Data.Migrations
                         .HasForeignKey("OpenIron.Api.Data.Entities.NutritionSettings", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("OpenIron.Api.Data.Entities.ScheduledDay", b =>
+                {
+                    b.HasOne("OpenIron.Api.Data.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OpenIron.Api.Data.Entities.WorkoutTemplate", null)
+                        .WithMany()
+                        .HasForeignKey("WorkoutTemplateId")
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("OpenIron.Api.Data.Entities.TemplateExercise", b =>

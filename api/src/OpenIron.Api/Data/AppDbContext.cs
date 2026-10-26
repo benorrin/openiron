@@ -13,6 +13,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<ServerSettings> ServerSettings => Set<ServerSettings>();
     public DbSet<Invite> Invites => Set<Invite>();
     public DbSet<NutritionSettings> NutritionSettings => Set<NutritionSettings>();
+    public DbSet<ActivityEntry> Activities => Set<ActivityEntry>();
+    public DbSet<ScheduledDay> ScheduledDays => Set<ScheduledDay>();
+    public DbSet<ConsistencySettings> ConsistencySettings => Set<ConsistencySettings>();
 
     protected override void OnModelCreating(ModelBuilder b)
     {
@@ -43,6 +46,27 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.Property(x => x.Activity).HasConversion<string>().HasMaxLength(20);
             e.Property(x => x.Goal).HasConversion<string>().HasMaxLength(20);
             e.HasOne<User>().WithOne().HasForeignKey<NutritionSettings>(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        b.Entity<ActivityEntry>(e =>
+        {
+            e.Property(x => x.Type).HasConversion<string>().HasMaxLength(20);
+            e.Property(x => x.Notes).HasMaxLength(500);
+            e.HasIndex(x => new { x.UserId, x.Date });
+            e.HasOne<User>().WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        b.Entity<ScheduledDay>(e =>
+        {
+            e.HasKey(x => new { x.UserId, x.DayOfWeek });
+            e.HasOne<User>().WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne<WorkoutTemplate>().WithMany().HasForeignKey(x => x.WorkoutTemplateId).OnDelete(DeleteBehavior.SetNull);
+        });
+
+        b.Entity<ConsistencySettings>(e =>
+        {
+            e.HasKey(x => x.UserId);
+            e.HasOne<User>().WithOne().HasForeignKey<ConsistencySettings>(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
         });
 
         b.Entity<Exercise>(e =>
