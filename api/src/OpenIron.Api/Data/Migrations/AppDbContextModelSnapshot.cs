@@ -119,6 +119,9 @@ namespace OpenIron.Api.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("ShareActivity")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(32)

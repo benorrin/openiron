@@ -2,8 +2,20 @@ using OpenIron.Api.Contracts;
 
 namespace OpenIron.Api.Services;
 
+public record ActivitySummary(int TotalWorkouts, int WorkoutsLast30Days, double VolumeLast30DaysKg, DateTime? LastWorkoutAt);
+
 public static class ProgressCalculator
 {
+    public static ActivitySummary Summarise(IReadOnlyCollection<WorkoutVolume> workouts, DateTime now)
+    {
+        var recent = workouts.Where(w => w.PerformedAt >= now.AddDays(-30)).ToList();
+        return new ActivitySummary(
+            workouts.Count,
+            recent.Count,
+            recent.Sum(w => w.VolumeKg),
+            workouts.Count == 0 ? null : workouts.Max(w => w.PerformedAt));
+    }
+
     /// <summary>Epley estimate of the weight that could be lifted once. A single rep is its own 1RM.</summary>
     public static double Estimate1Rm(double weightKg, int reps) =>
         reps <= 1 ? weightKg : weightKg * (1 + reps / 30.0);

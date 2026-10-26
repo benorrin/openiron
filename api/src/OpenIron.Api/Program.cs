@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using OpenIron.Api.Auth;
 using OpenIron.Api.Data;
 using OpenIron.Api.Data.Entities;
+using OpenIron.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,7 @@ builder.Services.AddOptions<JwtOptions>()
     .ValidateOnStart();
 
 builder.Services.AddSingleton<TokenService>();
+builder.Services.AddScoped<ActivityService>();
 builder.Services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
 
 var jwt = builder.Configuration.GetSection(JwtOptions.Section).Get<JwtOptions>() ?? new JwtOptions();
