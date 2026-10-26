@@ -116,6 +116,52 @@ namespace OpenIron.Api.Data.Migrations
                     b.ToTable("Invites");
                 });
 
+            modelBuilder.Entity("OpenIron.Api.Data.Entities.NutritionSettings", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Activity")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<int?>("AppliedKcal")
+                        .HasColumnType("integer");
+
+                    b.Property<DateOnly?>("AppliedOn")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly>("DateOfBirth")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Goal")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<double>("HeightCm")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("Sex")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<double?>("TargetWeightKg")
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<double>("WeeklyRateKg")
+                        .HasColumnType("double precision");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("NutritionSettings");
+                });
+
             modelBuilder.Entity("OpenIron.Api.Data.Entities.ServerSettings", b =>
                 {
                     b.Property<int>("Id")
@@ -343,6 +389,15 @@ namespace OpenIron.Api.Data.Migrations
                         .WithMany()
                         .HasForeignKey("UsedByUserId")
                         .OnDelete(DeleteBehavior.SetNull);
+                });
+
+            modelBuilder.Entity("OpenIron.Api.Data.Entities.NutritionSettings", b =>
+                {
+                    b.HasOne("OpenIron.Api.Data.Entities.User", null)
+                        .WithOne()
+                        .HasForeignKey("OpenIron.Api.Data.Entities.NutritionSettings", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("OpenIron.Api.Data.Entities.TemplateExercise", b =>
