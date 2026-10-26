@@ -17,7 +17,7 @@ I created OpenIron when I became frustrated with the lack of decent fitness trac
 - **Progress charts** - estimated 1RM, top set weight and volume per exercise, weekly training volume, and personal records.
 - **Body weight** - log weigh-ins and chart the trend over 30 days, 90 days, a year, or all time.
 - **Settings** - change your password, choose whether to share your training, or delete your account and all your data.
-- **Admin panel** - for admins: see who has an account, grant or revoke admin, disable or enable users, reset a password, delete a user, and open or close registration. Admins see workout counts only, never anyone's training or body weight.
+- **Admin panel** - for admins: see who has an account, grant or revoke admin, disable or enable users, reset a password, delete a user, and open or close registration, and create single-use invite codes. Admins see workout counts only, never anyone's training or body weight.
 - **Community** - opt in to share your training with other people on the same server, and see theirs: workouts and volume over the last 30 days, weekly volume, main lifts and recent workouts. Sharing is off by default, body weight and notes are never shared, and non-sharing users are indistinguishable from users who don't exist.
 
 Weights are in kilograms.
@@ -30,6 +30,14 @@ Weights are in kilograms.
 | `web/` | React + TypeScript single-page app built with Vite. Charts are hand-rolled SVG. |
 
 In Docker the web container serves the app and proxies `/api` to the API container, so the browser talks to a single origin.
+
+## Inviting people
+
+By default anyone who can reach the server can create an account. To restrict that, an admin turns off **Anyone can create an account** in the admin panel. Sign-up is then by invitation only: create an invite there (optionally with a note and an expiry), and give the person the code or the invite link. Each code works once, for one person.
+
+- The code is shown only when you create it. The server stores a hash, so a lost code can't be recovered: revoke it and make another.
+- A code isn't used up if the sign-up fails (for example, the username is taken).
+- Existing users aren't affected, and turning sign-up back on makes codes unnecessary.
 
 ## Running with Docker
 
@@ -94,8 +102,9 @@ All routes are under `/api`. Everything except register and login needs an `Auth
 | `GET /workouts/draft/{templateId}` | A template pre-filled with your last-used weights |
 | `GET/POST /body-weight`, `DELETE /body-weight/{id}` | Body weight (one entry per day; logging a day again replaces it) |
 | `PUT /account/password`, `POST /account/delete` | Change your password, delete your account |
-| `GET /auth/config` | Public: whether registration is open |
+| `GET /auth/config` | Public: whether anyone can register (otherwise sign-up needs an invite code) |
 | `GET /admin/overview`, `GET/PUT /admin/settings` | Admin only: server stats and the registration switch |
+| `GET/POST /admin/invites`, `DELETE /admin/invites/{id}` | Admin only: create (the code is returned once), list and revoke invite codes |
 | `GET /admin/users`, `PUT/DELETE /admin/users/{id}`, `POST /admin/users/{id}/reset-password` | Admin only: manage users (never your own account) |
 | `GET/PUT /community/settings` | Whether you share your activity (default off) |
 | `GET /community/users`, `GET /community/users/{username}` | Members who share, and one member's general progress |

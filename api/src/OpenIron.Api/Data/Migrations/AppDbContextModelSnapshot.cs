@@ -71,6 +71,51 @@ namespace OpenIron.Api.Data.Migrations
                     b.ToTable("Exercises");
                 });
 
+            modelBuilder.Entity("OpenIron.Api.Data.Entities.Invite", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CodeHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("CreatedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime?>("RevokedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("UsedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("UsedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CodeHash")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("UsedByUserId");
+
+                    b.ToTable("Invites");
+                });
+
             modelBuilder.Entity("OpenIron.Api.Data.Entities.ServerSettings", b =>
                 {
                     b.Property<int>("Id")
@@ -285,6 +330,19 @@ namespace OpenIron.Api.Data.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("OpenIron.Api.Data.Entities.Invite", b =>
+                {
+                    b.HasOne("OpenIron.Api.Data.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("OpenIron.Api.Data.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("OpenIron.Api.Data.Entities.TemplateExercise", b =>

@@ -6,7 +6,9 @@ public record RegisterRequest(
     [Required, RegularExpression(@"^[A-Za-z0-9_.-]{3,32}$", ErrorMessage = "Username must be 3-32 characters: letters, numbers, '_', '.' or '-'.")]
     string Username,
     [Required, MinLength(8), MaxLength(128)]
-    string Password);
+    string Password,
+    [MaxLength(64)]
+    string? InviteCode = null);
 
 public record LoginRequest([Required] string Username, [Required] string Password);
 

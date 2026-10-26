@@ -27,3 +27,17 @@ public record AdminOverviewDto(
     int TotalWorkouts,
     int WorkoutsLast30Days,
     bool RegistrationOpen);
+
+public record InviteDto(
+    Guid Id,
+    string? Note,
+    DateTime CreatedAt,
+    DateTime? ExpiresAt,
+    string Status,
+    string? UsedBy,
+    DateTime? UsedAt);
+
+public record CreateInviteRequest([StringLength(100)] string? Note, [Range(1, 365)] int? ExpiresInDays);
+
+/// <summary>The only response that ever contains the code itself.</summary>
+public record CreatedInviteDto(InviteDto Invite, string Code);

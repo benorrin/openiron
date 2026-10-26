@@ -29,6 +29,7 @@ builder.Services.AddOptions<JwtOptions>()
 builder.Services.AddSingleton<TokenService>();
 builder.Services.AddScoped<ActivityService>();
 builder.Services.AddScoped<AccountService>();
+builder.Services.AddScoped<InviteService>();
 builder.Services.Configure<AdminOptions>(builder.Configuration.GetSection(AdminOptions.Section));
 builder.Services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
 

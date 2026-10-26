@@ -18,7 +18,8 @@ namespace OpenIron.Api.Controllers;
 [ApiController]
 [Authorize(Roles = SessionValidator.AdminRole)]
 [Route("api/admin")]
-public class AdminController(AppDbContext db, IPasswordHasher<User> hasher, AccountService accounts) : ControllerBase
+public class AdminController(AppDbContext db, IPasswordHasher<User> hasher, AccountService accounts, InviteService invites)
+    : ControllerBase
 {
     [HttpGet("overview")]
     public async Task<AdminOverviewDto> Overview()
@@ -114,4 +115,53 @@ public class AdminController(AppDbContext db, IPasswordHasher<User> hasher, Acco
 
     private ObjectResult OwnAccount() =>
         Conflict(new ProblemDetails { Title = "You can't do that to your own account. Use Settings, or ask another admin." });
+
+    [HttpGet("invites")]
+    public async Task<List<InviteDto>> Invites()
+    {
+        var now = DateTime.UtcNow;
+        var rows = await db.Invites.AsNoTracking().OrderByDescending(i => i.CreatedAt).Take(200).ToListAsync();
+
+        var userIds = rows.Where(i => i.UsedByUserId != null).Select(i => i.UsedByUserId!.Value).Distinct().ToList();
+        var names = await db.Users.AsNoTracking().Where(u => userIds.Contains(u.Id)).ToDictionaryAsync(u => u.Id, u => u.Username);
+
+        return rows.Select(i => ToDto(i, now, i.UsedByUserId is { } id && names.TryGetValue(id, out var name) ? name : null)).ToList();
+    }
+
+    /// <summary>Creates a single-use invite. The code is in this response and nowhere else, so the admin has to pass it on now.</summary>
+    [HttpPost("invites")]
+    public async Task<ActionResult<CreatedInviteDto>> CreateInvite(CreateInviteRequest request)
+    {
+        var now = DateTime.UtcNow;
+        var code = InviteService.NewCode();
+        var invite = new Invite
+        {
+            CodeHash = InviteService.Hash(code),
+            Note = string.IsNullOrWhiteSpace(request.Note) ? null : request.Note.Trim(),
+            CreatedAt = now,
+            CreatedByUserId = User.GetUserId(),
+            ExpiresAt = request.ExpiresInDays is { } days ? now.AddDays(days) : null,
+        };
+        db.Invites.Add(invite);
+        await db.SaveChangesAsync();
+
+        return new CreatedInviteDto(ToDto(invite, now, null), code);
+    }
+
+    /// <summary>Revokes an invite that hasn't been used. Revoking one that is already revoked is a no-op.</summary>
+    [HttpDelete("invites/{id:guid}")]
+    public async Task<IActionResult> RevokeInvite(Guid id)
+    {
+        var invite = await db.Invites.FirstOrDefaultAsync(i => i.Id == id);
+        if (invite is null) return NotFound();
+        if (invite.UsedAt is not null)
+            return Conflict(new ProblemDetails { Title = "That invite has already been used." });
+
+        invite.RevokedAt ??= DateTime.UtcNow;
+        await db.SaveChangesAsync();
+        return NoContent();
+    }
+
+    private static InviteDto ToDto(Invite i, DateTime now, string? usedBy) => new(
+        i.Id, i.Note, i.CreatedAt, i.ExpiresAt, i.StatusAt(now).ToString().ToLowerInvariant(), usedBy, i.UsedAt);
 }

@@ -464,3 +464,31 @@ input.switch:focus-visible {
 .set-row .muted {
   white-space: nowrap;
 }
+
+/* Invite codes */
+
+.code-input {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.invite-reveal {
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  background: linear-gradient(var(--accent-soft), var(--accent-soft)), var(--surface);
+  animation: rise 0.3s var(--ease) both;
+}
+
+.code-display {
+  font-size: 1.375rem;
+  font-weight: 650;
+  text-align: center;
+  padding: 12px;
+}
+
+.pill-quiet {
+  background: var(--hover);
+  color: var(--ink-2);
+}
