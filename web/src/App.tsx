@@ -7,6 +7,7 @@ import { BodyWeightPage } from './pages/BodyWeightPage'
 import { CommunityPage } from './pages/CommunityPage'
 import { CommunityProfilePage } from './pages/CommunityProfilePage'
 import { HomePage } from './pages/HomePage'
+import { NutritionPage } from './pages/NutritionPage'
 import { LoginPage } from './pages/LoginPage'
 import { WorkoutEditPage } from './pages/WorkoutEditPage'
 import { WorkoutsPage } from './pages/WorkoutsPage'
@@ -33,6 +34,7 @@ export function App() {
         <Route path="workouts/:id" element={<WorkoutEditPage />} />
         <Route path="progress" element={<ProgressPage />} />
         <Route path="body-weight" element={<BodyWeightPage />} />
+        <Route path="nutrition" element={<NutritionPage />} />
         <Route path="community" element={<CommunityPage />} />
         <Route path="community/:username" element={<CommunityProfilePage />} />
         <Route path="admin" element={<AdminPage />} />

@@ -16,6 +16,10 @@ const PATHS = {
   bolt: 'M13 3 5 14h6l-1 7 8-11h-6z',
   chevronLeft: 'M15 5l-7 7 7 7',
   arrowRight: 'M5 12h14M13 6l6 6-6 6',
+  check: 'M5 12.5l4.5 4.5L19 7',
+  alert: 'M12 4l9 16H3zM12 10v4M12 17v.5',
+  info: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 11v5M12 7.5v.5',
+  flame: 'M12 3c.5 3.5 5 5.5 5 10.5a5 5 0 0 1-10 0c0-2 1-3.5 2.2-4.5.2 1.7 1 2.7 2 3 .3-3.2-.4-6 .8-9z',
 } as const
 
 export type IconName = keyof typeof PATHS

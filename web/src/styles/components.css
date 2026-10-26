@@ -492,3 +492,162 @@ input.switch:focus-visible {
   background: var(--hover);
   color: var(--ink-2);
 }
+
+/* Nutrition */
+
+.macro-bar {
+  display: flex;
+  gap: 2px; /* surface-coloured gap between segments, as the chart specs require */
+  height: 14px;
+  overflow: hidden;
+  border-radius: 7px;
+  background: var(--surface);
+}
+
+.macro-bar span {
+  min-width: 0;
+  transition: flex-grow 0.4s var(--ease);
+}
+
+.macro-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 22px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.macro-legend li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.target-number {
+  font-size: 3.25rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.callout {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.callout.warn {
+  border-color: color-mix(in srgb, var(--series-2) 55%, transparent);
+}
+
+.callout.good {
+  border-color: color-mix(in srgb, var(--series-3) 55%, transparent);
+}
+
+.status {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.status .icon-chip.warn {
+  background: color-mix(in srgb, var(--series-2) 18%, transparent);
+  color: var(--series-2);
+}
+
+.status .icon-chip.good {
+  background: color-mix(in srgb, var(--series-3) 18%, transparent);
+  color: var(--series-3);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.facts dt {
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+}
+
+.facts dd {
+  margin: 0;
+  font-weight: 650;
+  font-size: 1.125rem;
+}
+
+details.disclosure > summary {
+  cursor: pointer;
+  font-weight: 600;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+details.disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+
+details.disclosure > summary::after {
+  content: '+';
+  font-size: 1.25rem;
+  color: var(--ink-2);
+}
+
+details.disclosure[open] > summary::after {
+  content: '−';
+}
+
+details.disclosure[open] > summary {
+  margin-bottom: 14px;
+}
+
+/* Weight and Nutrition share a "Body" tab on a phone, so a switch sits at the top of both pages. */
+.body-tabs {
+  align-self: flex-start;
+}
+
+@media (min-width: 900px) {
+  .body-tabs {
+    display: none;
+  }
+}
+
+/* Tabs made of links behave like the button version. */
+.tabs a {
+  flex: 1;
+  padding: 8px 14px;
+  border-radius: 9px;
+  color: var(--ink-2);
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    box-shadow 0.15s;
+}
+
+.tabs a:hover {
+  color: var(--ink);
+}
+
+.tabs a.active {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-sm), 0 0 0 1px var(--border);
+}
