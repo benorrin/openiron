@@ -9,8 +9,14 @@ using OpenIron.Api.Data.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// PostgreSQL is the real database. SQLite exists so the API can run locally without one.
+var useSqlite = string.Equals(builder.Configuration["Database:Provider"], "Sqlite", StringComparison.OrdinalIgnoreCase);
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
+{
+    var connectionString = builder.Configuration.GetConnectionString("Default");
+    if (useSqlite) options.UseSqlite(connectionString ?? "Data Source=openiron.db");
+    else options.UseNpgsql(connectionString);
+});
 
 builder.Services.AddOptions<JwtOptions>()
     .Bind(builder.Configuration.GetSection(JwtOptions.Section))
@@ -42,7 +48,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    // Tests swap in SQLite, which has no migrations; create its schema from the model instead.
+    // The migrations target PostgreSQL; SQLite databases are created straight from the model instead.
     if (db.Database.IsNpgsql()) await db.Database.MigrateAsync();
     else await db.Database.EnsureCreatedAsync();
     await SeedData.EnsureAsync(db);
