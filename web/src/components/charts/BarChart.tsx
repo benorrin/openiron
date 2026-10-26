@@ -64,7 +64,7 @@ export function BarChart({ bars, ariaLabel, unit, color, height = 220 }: Props) 
             return (
               <g key={b.key}>
                 {h > 0 && (
-                  <path d={columnPath(cx - barW / 2, sy(b.value), barW, h)} fill={color} opacity={active === null || active === i ? 1 : 0.55} />
+                  <path className="chart-bar" d={columnPath(cx - barW / 2, sy(b.value), barW, h)} fill={color} opacity={active === null || active === i ? 1 : 0.55} />
                 )}
                 {i % labelEvery === 0 && (
                   <text className="chart-label" x={cx} y={height - 8} textAnchor="middle">

@@ -87,10 +87,11 @@ function PrivacySection() {
   return (
     <section className="card stack">
       <h2>Privacy</h2>
-      <label className="row" style={{ flexWrap: 'nowrap', alignItems: 'flex-start' }}>
+      <label className="switch-row">
         <input
           type="checkbox"
-          className="check"
+          className="switch"
+          role="switch"
           checked={settings?.shareActivity ?? false}
           disabled={!settings || update.isPending}
           onChange={(e) => update.mutate(e.target.checked)}

@@ -1,0 +1,221 @@
+.page {
+  animation: rise 0.4s var(--ease) both;
+}
+
+/* Workout logging */
+
+.set-row {
+  flex-wrap: nowrap;
+}
+
+.set-num {
+  width: 1.5rem;
+  text-align: center;
+}
+
+/* Sign in */
+
+.auth {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 56px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.auth .brand {
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.auth .brand img {
+  width: 32px;
+  height: 32px;
+}
+
+/* Sign-in: form on its own on a phone, with a brand panel beside it on a wide screen. */
+
+.auth-layout {
+  min-height: 100vh;
+}
+
+.auth-aside {
+  display: none;
+}
+
+.auth h1,
+.auth-aside h1 {
+  font-size: 2.25rem;
+  letter-spacing: -0.03em;
+}
+
+@media (min-width: 900px) {
+  .auth-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  }
+
+  .auth {
+    align-self: center;
+    width: 100%;
+    padding: 56px 40px;
+  }
+
+  .auth .brand {
+    display: none;
+  }
+
+  .auth-aside {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 32px;
+    padding: 48px;
+    background: var(--grad);
+    color: var(--accent-ink);
+  }
+
+  .auth-aside::before,
+  .auth-aside::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.22), transparent 65%);
+    pointer-events: none;
+  }
+
+  .auth-aside::before {
+    width: 520px;
+    height: 520px;
+    top: -180px;
+    right: -160px;
+  }
+
+  .auth-aside::after {
+    width: 420px;
+    height: 420px;
+    bottom: -160px;
+    left: -120px;
+  }
+
+  .auth-aside > * {
+    position: relative;
+  }
+
+  .auth-aside .brand {
+    color: inherit;
+    font-size: 1.375rem;
+  }
+
+  .auth-aside p {
+    opacity: 0.85;
+    font-size: 0.9375rem;
+  }
+
+  .auth-points {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .auth-points li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 550;
+  }
+
+  .auth-points svg {
+    padding: 8px;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* Home greeting */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px 32px;
+  flex-wrap: wrap;
+  padding: 28px;
+  border-radius: 22px;
+  background: var(--grad);
+  color: var(--accent-ink);
+  box-shadow: 0 18px 40px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  width: 380px;
+  height: 380px;
+  top: -190px;
+  right: -90px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.28), transparent 65%);
+  pointer-events: none;
+}
+
+.hero > * {
+  position: relative;
+}
+
+.hero h1 {
+  font-size: 2.25rem;
+  letter-spacing: -0.03em;
+}
+
+.hero-eyebrow {
+  font-size: 0.9375rem;
+  font-weight: 550;
+  opacity: 0.85;
+}
+
+.hero-sub {
+  margin-top: 6px;
+  opacity: 0.92;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.hero .btn {
+  box-shadow: none;
+}
+
+.hero-btn {
+  background: var(--accent-ink);
+  border-color: transparent;
+  color: var(--accent);
+}
+
+.hero-btn:hover {
+  background: var(--accent-ink);
+  filter: brightness(0.95);
+}
+
+.hero-btn-ghost {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: inherit;
+}
+
+.hero-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.26);
+}

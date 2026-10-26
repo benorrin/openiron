@@ -2,32 +2,62 @@ import { Link } from 'react-router-dom'
 import { useOverview, useTemplates, useWorkouts } from '../api/hooks'
 import { BarChart } from '../components/charts/BarChart'
 import { formatDate, formatKg, formatShortDate, formatVolume } from '../lib/format'
+import { PageSkeleton } from '../components/Skeleton'
+import { useState } from 'react'
+import { useAuth } from '../auth/useAuth'
+import { Icon } from '../components/Icon'
+
+function greeting(): string {
+  const hour = new Date().getHours()
+  return hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
+}
 
 export function HomePage() {
+  const { user } = useAuth()
+  const [hello] = useState(greeting)
   const { data: overview, isLoading } = useOverview()
   const { data: templates = [] } = useTemplates()
   const { data: workouts = [] } = useWorkouts()
 
-  if (isLoading || !overview) return <p className="empty">Loading…</p>
+  if (isLoading || !overview) return <PageSkeleton />
 
   const change = overview.bodyWeightChangeKg
 
   return (
     <div className="page">
-      <div className="page-header">
-        <h1>Home</h1>
-        <Link to="/workouts/new" className="btn primary">
-          Log workout
-        </Link>
-      </div>
+      <section className="hero">
+        <div>
+          <p className="hero-eyebrow">{hello}</p>
+          <h1>{user?.username}</h1>
+          <p className="hero-sub">
+            {overview.workoutsLast30Days > 0
+              ? `${overview.workoutsLast30Days} ${overview.workoutsLast30Days === 1 ? 'workout' : 'workouts'} in the last 30 days. Keep it going.`
+              : 'Log your first workout to start building your history.'}
+          </p>
+        </div>
+        <div className="hero-actions">
+          <Link to="/workouts/new" className="btn hero-btn">
+            <Icon name="plus" size={18} />
+            Log workout
+          </Link>
+          {templates[0] && (
+            <Link to={`/workouts/new?template=${templates[0].id}`} className="btn hero-btn-ghost">
+              Start {templates[0].name}
+              <Icon name="arrowRight" size={18} />
+            </Link>
+          )}
+        </div>
+      </section>
 
       <div className="tiles">
         <div className="card tile">
+          <span className="icon-chip"><Icon name="calendar" size={18} /></span>
           <div className="tile-label">Workouts, last 30 days</div>
           <div className="tile-value">{overview.workoutsLast30Days}</div>
           <div className="tile-sub">{overview.totalWorkouts} in total</div>
         </div>
         <div className="card tile">
+          <span className="icon-chip"><Icon name="scale" size={18} /></span>
           <div className="tile-label">Body weight</div>
           <div className="tile-value">
             {overview.latestBodyWeightKg === null ? '–' : `${formatKg(overview.latestBodyWeightKg)} kg`}

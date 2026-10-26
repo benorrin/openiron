@@ -1,0 +1,84 @@
+/*
+ * Design tokens. --surface (and the series colours) are what the chart palette was validated against,
+ * so change them only together with a re-run of the palette validator.
+ */
+
+:root {
+  color-scheme: light;
+
+  --page: #f4f4f1;
+  --surface: #fcfcfb;
+  --surface-2: #f5f5f2;
+  --ink: #0b0b0b;
+  --ink-2: #52514e;
+  --ink-3: #6f6d68;
+  --grid: #e1e0d9;
+  --axis: #c3c2b7;
+  --track: #c9c8c0;
+  --border: rgba(11, 11, 11, 0.09);
+  --border-strong: rgba(11, 11, 11, 0.18);
+  --hover: rgba(11, 11, 11, 0.05);
+
+  --accent: #2a78d6;
+  --accent-2: #6250d6;
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(42, 120, 214, 0.1);
+  --grad: linear-gradient(135deg, var(--accent), var(--accent-2));
+
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --danger: #b42f2f;
+  --danger-soft: rgba(180, 47, 47, 0.08);
+  --good: #006300;
+
+  --glow-1: rgba(42, 120, 214, 0.16);
+  --glow-2: rgba(98, 80, 214, 0.12);
+  --glass: rgba(252, 252, 251, 0.74);
+
+  --shadow-sm: 0 1px 2px rgba(11, 11, 11, 0.05);
+  --shadow-md: 0 6px 18px rgba(11, 11, 11, 0.07), 0 1px 3px rgba(11, 11, 11, 0.05);
+  --shadow-lg: 0 20px 44px rgba(11, 11, 11, 0.14);
+
+  --radius: 16px;
+  --radius-sm: 10px;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --font: system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+
+    --page: #0b0b0a;
+    --surface: #1a1a19;
+    --surface-2: #141413;
+    --ink: #f0efec;
+    --ink-2: #c3c2b7;
+    --ink-3: #a09e97;
+    --grid: #2c2c2a;
+    --axis: #383835;
+    --track: #4a4a46;
+    --border: rgba(255, 255, 255, 0.09);
+    --border-strong: rgba(255, 255, 255, 0.2);
+    --hover: rgba(255, 255, 255, 0.07);
+
+    --accent: #3987e5;
+    --accent-2: #9085e9;
+    --accent-ink: #0b0b0b;
+    --accent-soft: rgba(57, 135, 229, 0.16);
+
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --danger: #ec6b6b;
+    --danger-soft: rgba(236, 107, 107, 0.1);
+    --good: #0ca30c;
+
+    --glow-1: rgba(57, 135, 229, 0.16);
+    --glow-2: rgba(144, 133, 233, 0.1);
+    --glass: rgba(26, 26, 25, 0.74);
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 20px 44px rgba(0, 0, 0, 0.6);
+  }
+}

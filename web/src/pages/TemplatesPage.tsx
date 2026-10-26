@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useDeleteTemplate, useTemplates } from '../api/hooks'
+import { PageSkeleton } from '../components/Skeleton'
+import { EmptyState } from '../components/EmptyState'
 
 export function TemplatesPage() {
   const { data: templates, isLoading, error } = useTemplates()
@@ -14,12 +16,20 @@ export function TemplatesPage() {
         </Link>
       </div>
 
-      {isLoading && <p className="empty">Loading…</p>}
+      {isLoading && <PageSkeleton />}
       {error && <p className="error">{error.message}</p>}
       {templates?.length === 0 && (
-        <div className="card empty">
-          <p>No templates yet. Create one for a session you repeat, like leg day.</p>
-        </div>
+        <EmptyState
+          icon="clipboard"
+          title="No templates yet"
+          action={
+            <Link to="/templates/new" className="btn primary">
+              Create a template
+            </Link>
+          }
+        >
+          Save a session you repeat, like leg day, and start it in one tap.
+        </EmptyState>
       )}
 
       {templates && templates.length > 0 && (

@@ -1,0 +1,466 @@
+/* Surfaces */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.card-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.grow {
+  flex: 1;
+  min-width: 0;
+}
+
+.muted {
+  color: var(--ink-2);
+  font-size: 0.875rem;
+}
+
+.error {
+  color: var(--danger);
+  font-size: 0.875rem;
+}
+
+.success {
+  color: var(--good);
+  font-size: 0.875rem;
+}
+
+.danger-zone {
+  border-color: color-mix(in srgb, var(--danger) 45%, transparent);
+  background: linear-gradient(var(--danger-soft), var(--danger-soft)), var(--surface);
+}
+
+/* Controls */
+
+.btn {
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  padding: 9px 16px;
+  min-height: 42px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: var(--shadow-sm);
+  transition:
+    background 0.15s,
+    transform 0.15s var(--ease),
+    box-shadow 0.15s,
+    filter 0.15s;
+}
+
+.btn:hover {
+  background: var(--surface-2);
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+  transform: none;
+}
+
+.btn.primary {
+  background: var(--grad);
+  border-color: transparent;
+  color: var(--accent-ink);
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+.btn.primary:hover {
+  filter: brightness(1.07);
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--accent) 42%, transparent);
+}
+
+.btn.danger {
+  color: var(--danger);
+}
+
+.btn.danger:hover {
+  background: var(--danger-soft);
+}
+
+.btn.small {
+  min-height: 34px;
+  padding: 4px 12px;
+  font-size: 0.875rem;
+}
+
+.btn.ghost {
+  border-color: transparent;
+  background: none;
+  box-shadow: none;
+}
+
+.btn.ghost:hover {
+  background: var(--hover);
+}
+
+.btn svg {
+  flex: none;
+}
+
+label.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  font-size: 1rem;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  min-height: 42px;
+  width: 100%;
+  min-width: 0;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+
+input:hover,
+select:hover,
+textarea:hover {
+  border-color: var(--axis);
+}
+
+textarea {
+  resize: vertical;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.btn:focus-visible,
+a:focus-visible,
+.tabs button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* On/off switch: a checkbox that is announced as a switch. */
+input.switch {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  flex: none;
+  width: 46px;
+  height: 28px;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--track);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+input.switch::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s var(--ease);
+}
+
+input.switch:checked {
+  background: var(--grad);
+}
+
+input.switch:checked::after {
+  transform: translateX(18px);
+}
+
+input.switch:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+input.switch:focus-visible {
+  box-shadow: 0 0 0 3px var(--accent-soft);
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.switch-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  cursor: pointer;
+}
+
+/* Segmented control, used for tabs and range presets */
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 12px;
+  background: var(--hover);
+}
+
+.tabs button {
+  flex: 1;
+  font: inherit;
+  font-weight: 600;
+  padding: 8px;
+  border: 0;
+  border-radius: 9px;
+  background: none;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    box-shadow 0.15s;
+}
+
+.tabs button:hover {
+  color: var(--ink);
+}
+
+.tabs button[aria-selected='true'],
+.tabs button[aria-pressed='true'] {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-sm), 0 0 0 1px var(--border);
+}
+
+.range-filter {
+  align-self: flex-start;
+}
+
+.range-filter button {
+  padding: 6px 12px;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+/* Lists */
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.list > li {
+  border-top: 1px solid var(--grid);
+}
+
+.list > li:first-child {
+  border-top: 0;
+}
+
+.card.list {
+  padding: 6px 8px;
+}
+
+.list-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 10px;
+  margin: 0 -2px;
+  border-radius: var(--radius-sm);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    background 0.15s,
+    transform 0.2s var(--ease);
+}
+
+.list-link:hover {
+  background: var(--hover);
+}
+
+.pill {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.pill-danger {
+  background: none;
+  border: 1px solid var(--danger);
+  color: var(--danger);
+}
+
+/* Loading and empty states */
+
+.skeleton {
+  border-radius: var(--radius-sm);
+  background: linear-gradient(90deg, var(--hover) 25%, var(--border) 37%, var(--hover) 63%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+.empty {
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--ink-2);
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 36px 20px;
+  text-align: center;
+  color: var(--ink-2);
+}
+
+.empty-state .icon-chip {
+  width: 56px;
+  height: 56px;
+  border-radius: 18px;
+}
+
+.empty-state h2 {
+  color: var(--ink);
+}
+
+.icon-chip {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  flex: none;
+}
+
+/* Stat tiles */
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 14px;
+}
+
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tile .icon-chip {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+}
+
+.tile .tile-label {
+  font-size: 0.875rem;
+  color: var(--ink-2);
+  padding-right: 44px;
+}
+
+.tile .tile-value {
+  font-size: 2rem;
+  font-weight: 750;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.tile .tile-sub {
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+}
+
+.two-col {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+
+@media (min-width: 768px) {
+  .two-col {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Fields in a row share the width but wrap onto their own line before they get cramped. */
+.row > label.field.grow {
+  flex: 1 1 140px;
+}
+
+.row > label.field.grow.wide {
+  flex-basis: 220px;
+}
+
+/* Set rows stay on one line whatever the width. */
+.set-row > label.field.grow {
+  flex: 1 1 0;
+}
+
+.set-row .muted {
+  white-space: nowrap;
+}

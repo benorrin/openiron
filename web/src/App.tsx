@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { useAuth } from './auth/useAuth'
 import { Layout } from './components/Layout'
+import { PageSkeleton } from './components/Skeleton'
 import { AdminPage } from './pages/AdminPage'
 import { BodyWeightPage } from './pages/BodyWeightPage'
 import { CommunityPage } from './pages/CommunityPage'
@@ -17,7 +18,7 @@ import { TemplatesPage } from './pages/TemplatesPage'
 export function App() {
   const { user, loading } = useAuth()
 
-  if (loading) return <p className="empty">Loading…</p>
+  if (loading) return <PageSkeleton />
   if (!user) return <LoginPage />
 
   return (

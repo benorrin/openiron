@@ -2,6 +2,8 @@ import { Link, useParams } from 'react-router-dom'
 import { useCommunityProfile } from '../api/hooks'
 import { BarChart } from '../components/charts/BarChart'
 import { formatDate, formatKg, formatShortDate, formatVolume } from '../lib/format'
+import { PageSkeleton } from '../components/Skeleton'
+import { Icon } from '../components/Icon'
 
 // Bodyweight exercises are logged at 0 kg, which would read as a failed lift.
 const lift = (kg: number) => (kg > 0 ? `${formatKg(kg)} kg` : '–')
@@ -10,7 +12,7 @@ export function CommunityProfilePage() {
   const { username } = useParams()
   const { data: profile, isLoading, error } = useCommunityProfile(username)
 
-  if (isLoading) return <p className="empty">Loading…</p>
+  if (isLoading) return <PageSkeleton />
   if (!profile)
     return (
       <div className="page">
@@ -34,11 +36,13 @@ export function CommunityProfilePage() {
 
       <div className="tiles">
         <div className="card tile">
+          <span className="icon-chip"><Icon name="calendar" size={18} /></span>
           <div className="tile-label">Workouts, last 30 days</div>
           <div className="tile-value">{member.workoutsLast30Days}</div>
           <div className="tile-sub">{member.totalWorkouts} in total</div>
         </div>
         <div className="card tile">
+          <span className="icon-chip"><Icon name="dumbbell" size={18} /></span>
           <div className="tile-label">Volume, last 30 days</div>
           <div className="tile-value">{formatVolume(member.volumeLast30DaysKg)} kg</div>
           <div className="tile-sub">{member.lastWorkoutAt ? `Last trained ${formatDate(member.lastWorkoutAt)}` : 'No workouts yet'}</div>

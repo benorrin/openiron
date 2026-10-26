@@ -6,6 +6,9 @@ import { LineChart } from '../components/charts/LineChart'
 import { RangeFilter } from '../components/RangeFilter'
 import { RANGES, withinRange } from '../lib/range'
 import { formatDate, formatKg, formatShortDate, formatVolume } from '../lib/format'
+import { PageSkeleton } from '../components/Skeleton'
+import { EmptyState } from '../components/EmptyState'
+import { Icon } from '../components/Icon'
 
 export function ProgressPage() {
   const { data: exercises, isLoading } = useProgressExercises()
@@ -16,20 +19,23 @@ export function ProgressPage() {
   const exerciseId = picked ?? exercises?.[0]?.exerciseId
   const { data: progress } = useExerciseProgress(exerciseId)
 
-  if (isLoading) return <p className="empty">Loading…</p>
+  if (isLoading) return <PageSkeleton />
 
   if (!exercises || exercises.length === 0) {
     return (
       <div className="page">
         <h1>Progress</h1>
-        <div className="card empty stack">
-          <p>Charts appear once you've logged a workout.</p>
-          <div>
+        <EmptyState
+          icon="trending"
+          title="No progress to chart yet"
+          action={
             <Link to="/workouts/new" className="btn primary">
               Log a workout
             </Link>
-          </div>
-        </div>
+          }
+        >
+          Charts appear once you've logged a workout.
+        </EmptyState>
       </div>
     )
   }
@@ -57,16 +63,19 @@ export function ProgressPage() {
         <>
           <div className="tiles">
             <div className="card tile">
+              <span className="icon-chip"><Icon name="dumbbell" size={18} /></span>
               <div className="tile-label">Heaviest set</div>
               <div className="tile-value">{formatKg(progress.records.heaviestWeightKg)} kg</div>
               <div className="tile-sub">{progress.records.heaviestOn ? formatDate(progress.records.heaviestOn) : ''}</div>
             </div>
             <div className="card tile">
+              <span className="icon-chip"><Icon name="bolt" size={18} /></span>
               <div className="tile-label">Best estimated 1RM</div>
               <div className="tile-value">{formatKg(progress.records.best1RmKg)} kg</div>
               <div className="tile-sub">{progress.records.best1RmOn ? formatDate(progress.records.best1RmOn) : ''}</div>
             </div>
             <div className="card tile">
+              <span className="icon-chip"><Icon name="calendar" size={18} /></span>
               <div className="tile-label">Sessions</div>
               <div className="tile-value">{progress.points.length}</div>
               <div className="tile-sub">{points.length} in range</div>
@@ -74,9 +83,9 @@ export function ProgressPage() {
           </div>
 
           {points.length === 0 ? (
-            <div className="card empty">
-              <p>No sessions of {progress.name} in the last {range.label}.</p>
-            </div>
+            <EmptyState icon="calendar" title="Nothing in this range">
+              No sessions of {progress.name} in the last {range.label}.
+            </EmptyState>
           ) : (
             <>
               <section className="card">

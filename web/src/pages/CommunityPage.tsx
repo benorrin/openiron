@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
 import { useCommunityMembers, useCommunitySettings } from '../api/hooks'
 import { formatDate, formatVolume } from '../lib/format'
+import { PageSkeleton } from '../components/Skeleton'
+import { EmptyState } from '../components/EmptyState'
 
 export function CommunityPage() {
   const { data: settings } = useCommunitySettings()
@@ -17,12 +19,12 @@ export function CommunityPage() {
         <Link to="/settings">Change this in Settings</Link>.
       </p>
 
-      {isLoading && <p className="empty">Loading…</p>}
+      {isLoading && <PageSkeleton />}
       {error && <p className="error">{error.message}</p>}
       {members?.length === 0 && (
-        <div className="card empty">
-          <p>Nobody is sharing yet. Turn sharing on in Settings to appear here.</p>
-        </div>
+        <EmptyState icon="users" title="Nobody is sharing yet">
+          Turn sharing on in Settings to appear here.
+        </EmptyState>
       )}
 
       {members && members.length > 0 && (
