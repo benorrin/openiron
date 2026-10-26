@@ -63,7 +63,13 @@ public class AdminController(AppDbContext db, IPasswordHasher<User> hasher, Acco
         if (user is null) return NotFound();
 
         if (update.IsAdmin is { } isAdmin) user.IsAdmin = isAdmin;
-        if (update.IsDisabled is { } isDisabled) user.IsDisabled = isDisabled;
+        if (update.IsDisabled is { } isDisabled)
+        {
+            // Disabling must end the user's sessions for good. Rotating the stamp means tokens they held before
+            // can't come back to life when the account is enabled again.
+            if (isDisabled != user.IsDisabled) user.SecurityStamp = Guid.NewGuid();
+            user.IsDisabled = isDisabled;
+        }
         await db.SaveChangesAsync();
 
         return (await Users()).First(u => u.Id == id);

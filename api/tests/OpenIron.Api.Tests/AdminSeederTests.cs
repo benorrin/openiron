@@ -55,12 +55,14 @@ public class AdminSeederTests : IDisposable
         var existing = new User { Username = "Boss", NormalizedUsername = "boss", PasswordHash = "" };
         existing.PasswordHash = _hasher.HashPassword(existing, "original-password");
         existing.IsDisabled = true;
+        var stampBefore = existing.SecurityStamp;
         _db.Users.Add(existing);
         await _db.SaveChangesAsync();
 
         await Seed("boss", "a-different-password");
 
         var user = await _db.Users.SingleAsync();
+        Assert.NotEqual(stampBefore, user.SecurityStamp);
         Assert.True(user.IsAdmin);
         Assert.False(user.IsDisabled);
         Assert.Equal(PasswordVerificationResult.Success, _hasher.VerifyHashedPassword(user, user.PasswordHash, "original-password"));

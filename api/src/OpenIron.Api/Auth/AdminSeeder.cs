@@ -32,6 +32,8 @@ public static class AdminSeeder
         else if (!user.IsAdmin || user.IsDisabled)
         {
             user.IsAdmin = true;
+            // Re-enabling must not revive tokens issued before the account was disabled.
+            if (user.IsDisabled) user.SecurityStamp = Guid.NewGuid();
             user.IsDisabled = false;
             logger.LogInformation("Promoted existing account {Username} to admin", username);
         }

@@ -110,6 +110,38 @@ public class AdminTests(ApiFactory factory) : IClassFixture<ApiFactory>
     }
 
     [Fact]
+    public async Task Tokens_from_before_a_disable_stay_dead_after_the_user_is_enabled_again()
+    {
+        var admin = await CreateAdminAsync("adm_revoker");
+        var member = await factory.CreateAuthenticatedAsync("adm_stolen");
+        var memberId = await IdOf(member);
+
+        await admin.PutAsJsonAsync($"/api/admin/users/{memberId}", new AdminUserUpdate(null, true));
+        await admin.PutAsJsonAsync($"/api/admin/users/{memberId}", new AdminUserUpdate(null, false));
+
+        // The old token is the one an attacker might have kept; re-enabling must not bring it back.
+        Assert.Equal(HttpStatusCode.Unauthorized, (await member.GetAsync("/api/auth/me")).StatusCode);
+
+        var login = await factory.CreateClient().PostAsJsonAsync("/api/auth/login", new LoginRequest("adm_stolen", "correct horse battery"));
+        var auth = (await login.Content.ReadFromJsonAsync<AuthResponse>())!;
+        member.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", auth.Token);
+        Assert.Equal(HttpStatusCode.OK, (await member.GetAsync("/api/auth/me")).StatusCode);
+    }
+
+    [Fact]
+    public async Task Setting_a_flag_to_its_current_value_does_not_sign_the_user_out()
+    {
+        var admin = await CreateAdminAsync("adm_noop");
+        var member = await factory.CreateAuthenticatedAsync("adm_bystander");
+        var memberId = await IdOf(member);
+
+        await admin.PutAsJsonAsync($"/api/admin/users/{memberId}", new AdminUserUpdate(null, false));
+        await admin.PutAsJsonAsync($"/api/admin/users/{memberId}", new AdminUserUpdate(true, null));
+
+        Assert.Equal(HttpStatusCode.OK, (await member.GetAsync("/api/auth/me")).StatusCode);
+    }
+
+    [Fact]
     public async Task Admins_cannot_act_on_their_own_account()
     {
         var admin = await CreateAdminAsync("adm_self");
