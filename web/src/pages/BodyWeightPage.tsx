@@ -5,6 +5,8 @@ import { RangeFilter } from '../components/RangeFilter'
 import { RANGES, withinRange } from '../lib/range'
 import { formatDate, formatKg, formatShortDate, parseDate, todayIso } from '../lib/format'
 import { PageSkeleton } from '../components/Skeleton'
+import { EmptyState } from '../components/EmptyState'
+import { Icon } from '../components/Icon'
 
 const HISTORY_PREVIEW = 10
 
@@ -60,27 +62,29 @@ export function BodyWeightPage() {
       {isLoading && <PageSkeleton />}
       {error && <p className="error">{error.message}</p>}
       {!isLoading && entries.length === 0 && (
-        <div className="card empty">
-          <p>No weigh-ins yet. Log your first one above to start the chart.</p>
-        </div>
+        <EmptyState icon="scale" title="No weigh-ins yet">
+          Log your first one above to start the chart.
+        </EmptyState>
       )}
 
       {entries.length > 0 && (
         <>
           <RangeFilter value={range} onChange={setRange} />
           {visible.length === 0 ? (
-            <div className="card empty">
-              <p>No weigh-ins in the last {range.label}.</p>
-            </div>
+            <EmptyState icon="calendar" title="Nothing in this range">
+              No weigh-ins in the last {range.label}.
+            </EmptyState>
           ) : (
             <>
               <div className="tiles">
                 <div className="card tile">
+                  <span className="icon-chip"><Icon name="scale" size={18} /></span>
                   <div className="tile-label">Latest</div>
                   <div className="tile-value">{formatKg(last.weightKg)} kg</div>
                   <div className="tile-sub">{formatDate(last.date)}</div>
                 </div>
                 <div className="card tile">
+                  <span className="icon-chip"><Icon name="trending" size={18} /></span>
                   <div className="tile-label">Change over {range.label}</div>
                   <div className="tile-value">
                     {change === null ? '–' : `${change > 0 ? '+' : change < 0 ? '−' : ''}${formatKg(Math.abs(change))} kg`}

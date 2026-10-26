@@ -446,3 +446,21 @@ input.switch:focus-visible {
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/* Fields in a row share the width but wrap onto their own line before they get cramped. */
+.row > label.field.grow {
+  flex: 1 1 140px;
+}
+
+.row > label.field.grow.wide {
+  flex-basis: 220px;
+}
+
+/* Set rows stay on one line whatever the width. */
+.set-row > label.field.grow {
+  flex: 1 1 0;
+}
+
+.set-row .muted {
+  white-space: nowrap;
+}

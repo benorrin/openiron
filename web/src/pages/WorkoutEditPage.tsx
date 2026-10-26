@@ -173,7 +173,7 @@ function WorkoutForm({ id, initial }: { id: string | undefined; initial: Initial
           <input value={name} onChange={(e) => setName(e.target.value)} maxLength={100} required />
         </label>
         <div className="row">
-          <label className="field grow">
+          <label className="field grow wide">
             When
             <input type="datetime-local" value={performedAt} onChange={(e) => setPerformedAt(e.target.value)} required />
           </label>

@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { useAuthConfig } from '../api/hooks'
+import { Icon } from '../components/Icon'
 import { useAuth } from '../auth/useAuth'
 
 export function LoginPage() {
@@ -27,57 +28,80 @@ export function LoginPage() {
   }
 
   return (
-    <div className="auth">
-      <div className="brand">
-        <img src="/favicon.svg" alt="" />
-        OpenIron
-      </div>
-      {registrationOpen ? (
-        <div className="tabs" role="tablist">
-          <button role="tab" aria-selected={mode === 'login'} onClick={() => setMode('login')}>
-            Log in
-          </button>
-          <button role="tab" aria-selected={mode === 'register'} onClick={() => setMode('register')}>
-            Create account
-          </button>
+    <div className="auth-layout">
+      <aside className="auth-aside">
+        <div className="brand">
+          <img src="/favicon.svg" alt="" />
+          OpenIron
         </div>
-      ) : (
-        <p className="muted" style={{ textAlign: 'center' }}>
-          New accounts are closed on this server. Ask an admin if you need one.
-        </p>
-      )}
-      <form className="card stack" onSubmit={submit}>
-        <label className="field">
-          Username
-          <input
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            autoComplete="username"
-            autoCapitalize="none"
-            required
-          />
-        </label>
-        <label className="field">
-          Password
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-            minLength={mode === 'register' ? 8 : undefined}
-            required
-          />
-          {mode === 'register' && <span className="muted">At least 8 characters.</span>}
-        </label>
-        {error && (
-          <p className="error" role="alert">
-            {error}
+        <div className="stack" style={{ gap: 20 }}>
+          <h1>Your training, on your own server.</h1>
+          <ul className="auth-points">
+            <li>
+              <Icon name="clipboard" /> Plan sessions as templates
+            </li>
+            <li>
+              <Icon name="dumbbell" /> Log every set in seconds
+            </li>
+            <li>
+              <Icon name="trending" /> Watch your lifts and body weight trend
+            </li>
+          </ul>
+        </div>
+        <p>Self-hosted and open source. Your data never leaves your server.</p>
+      </aside>
+      <div className="auth">
+        <div className="brand">
+          <img src="/favicon.svg" alt="" />
+          OpenIron
+        </div>
+        {registrationOpen ? (
+          <div className="tabs" role="tablist">
+            <button role="tab" aria-selected={mode === 'login'} onClick={() => setMode('login')}>
+              Log in
+            </button>
+            <button role="tab" aria-selected={mode === 'register'} onClick={() => setMode('register')}>
+              Create account
+            </button>
+          </div>
+        ) : (
+          <p className="muted" style={{ textAlign: 'center' }}>
+            New accounts are closed on this server. Ask an admin if you need one.
           </p>
         )}
-        <button className="btn primary" disabled={busy}>
-          {mode === 'login' ? 'Log in' : 'Create account'}
-        </button>
-      </form>
+        <form className="card stack" onSubmit={submit}>
+          <label className="field">
+            Username
+            <input
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              autoComplete="username"
+              autoCapitalize="none"
+              required
+            />
+          </label>
+          <label className="field">
+            Password
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+              minLength={mode === 'register' ? 8 : undefined}
+              required
+            />
+            {mode === 'register' && <span className="muted">At least 8 characters.</span>}
+          </label>
+          {error && (
+            <p className="error" role="alert">
+              {error}
+            </p>
+          )}
+          <button className="btn primary" disabled={busy}>
+            {mode === 'login' ? 'Log in' : 'Create account'}
+          </button>
+        </form>
+      </div>
     </div>
   )
 }

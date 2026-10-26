@@ -12,6 +12,7 @@ import type { AdminUser } from '../api/types'
 import { useAuth } from '../auth/useAuth'
 import { formatDate } from '../lib/format'
 import { PageSkeleton } from '../components/Skeleton'
+import { Icon } from '../components/Icon'
 
 export function AdminPage() {
   const { user } = useAuth()
@@ -37,6 +38,7 @@ function OverviewSection() {
     <>
       <div className="tiles">
         <div className="card tile">
+          <span className="icon-chip"><Icon name="users" size={18} /></span>
           <div className="tile-label">Users</div>
           <div className="tile-value">{overview.totalUsers}</div>
           <div className="tile-sub">
@@ -45,6 +47,7 @@ function OverviewSection() {
           </div>
         </div>
         <div className="card tile">
+          <span className="icon-chip"><Icon name="calendar" size={18} /></span>
           <div className="tile-label">Workouts, last 30 days</div>
           <div className="tile-value">{overview.workoutsLast30Days}</div>
           <div className="tile-sub">{overview.totalWorkouts} in total</div>

@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useTemplates, useWorkouts } from '../api/hooks'
 import { formatDate, formatVolume } from '../lib/format'
 import { PageSkeleton } from '../components/Skeleton'
+import { EmptyState } from '../components/EmptyState'
 
 export function WorkoutsPage() {
   const { data: workouts, isLoading, error } = useWorkouts()
@@ -37,9 +38,9 @@ export function WorkoutsPage() {
       {isLoading && <PageSkeleton />}
       {error && <p className="error">{error.message}</p>}
       {workouts?.length === 0 && (
-        <div className="card empty">
-          <p>Nothing logged yet. Start a workout from a template, or log an empty one.</p>
-        </div>
+        <EmptyState icon="dumbbell" title="Nothing logged yet">
+          Start a workout from a template, or log an empty one.
+        </EmptyState>
       )}
 
       {workouts && workouts.length > 0 && (
