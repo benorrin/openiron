@@ -11,6 +11,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Workout> Workouts => Set<Workout>();
     public DbSet<BodyWeightEntry> BodyWeightEntries => Set<BodyWeightEntry>();
     public DbSet<ServerSettings> ServerSettings => Set<ServerSettings>();
+    public DbSet<Invite> Invites => Set<Invite>();
 
     protected override void OnModelCreating(ModelBuilder b)
     {
@@ -22,6 +23,16 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         });
 
         b.Entity<ServerSettings>(e => e.Property(x => x.Id).ValueGeneratedNever());
+
+        b.Entity<Invite>(e =>
+        {
+            e.Property(x => x.CodeHash).HasMaxLength(64);
+            e.Property(x => x.Note).HasMaxLength(100);
+            e.HasIndex(x => x.CodeHash).IsUnique();
+            // Invites outlive the people they mention: deleting an account keeps the record, minus the link.
+            e.HasOne<User>().WithMany().HasForeignKey(x => x.CreatedByUserId).OnDelete(DeleteBehavior.SetNull);
+            e.HasOne<User>().WithMany().HasForeignKey(x => x.UsedByUserId).OnDelete(DeleteBehavior.SetNull);
+        });
 
         b.Entity<Exercise>(e =>
         {
