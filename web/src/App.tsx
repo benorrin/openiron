@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { useAuth } from './auth/useAuth'
 import { Layout } from './components/Layout'
+import { AdminPage } from './pages/AdminPage'
 import { BodyWeightPage } from './pages/BodyWeightPage'
 import { CommunityPage } from './pages/CommunityPage'
 import { CommunityProfilePage } from './pages/CommunityProfilePage'
@@ -33,6 +34,7 @@ export function App() {
         <Route path="body-weight" element={<BodyWeightPage />} />
         <Route path="community" element={<CommunityPage />} />
         <Route path="community/:username" element={<CommunityProfilePage />} />
+        <Route path="admin" element={<AdminPage />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>

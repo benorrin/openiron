@@ -664,3 +664,9 @@ input.check {
 .danger-zone {
   border-color: var(--danger);
 }
+
+.pill-danger {
+  background: none;
+  border: 1px solid var(--danger);
+  color: var(--danger);
+}

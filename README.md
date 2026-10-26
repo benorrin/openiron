@@ -16,6 +16,8 @@ I created OpenIron when I became frustrated with the lack of decent fitness trac
 - **Workout logging** - start from a template and the weights from your last session are pre-filled, or log an empty workout.
 - **Progress charts** - estimated 1RM, top set weight and volume per exercise, weekly training volume, and personal records.
 - **Body weight** - log weigh-ins and chart the trend over 30 days, 90 days, a year, or all time.
+- **Settings** - change your password, choose whether to share your training, or delete your account and all your data.
+- **Admin panel** - for admins: see who has an account, grant or revoke admin, disable or enable users, reset a password, delete a user, and open or close registration. Admins see workout counts only, never anyone's training or body weight.
 - **Community** - opt in to share your training with other people on the same server, and see theirs: workouts and volume over the last 30 days, weekly volume, main lifts and recent workouts. Sharing is off by default, body weight and notes are never shared, and non-sharing users are indistinguishable from users who don't exist.
 
 Weights are in kilograms.
@@ -37,6 +39,8 @@ cp .env.example .env
 docker compose up --build
 ```
 
+To get an admin account, set `ADMIN_USERNAME` and `ADMIN_PASSWORD` in `.env`: the account is created (or an existing one promoted) when the API starts. The password is only used if the account doesn't exist yet, so you can remove it from `.env` afterwards. Without it there is no admin.
+
 The app is then at <http://localhost:8080> (change `WEB_PORT` in `.env` to move it). Database migrations are applied automatically when the API starts. Put a TLS-terminating reverse proxy in front of it if you expose it beyond your LAN.
 
 ## Development
@@ -44,7 +48,8 @@ The app is then at <http://localhost:8080> (change `WEB_PORT` in `.env` to move 
 Requirements: .NET 8 SDK and Node.js 20+. PostgreSQL is optional - the API can use a local SQLite file instead.
 
 ```sh
-# API on http://localhost:8080 (SQLite file, dev JWT secret from appsettings.Development.json)
+# API on http://localhost:8080 (SQLite file, dev JWT secret from appsettings.Development.json).
+# The launch profile also creates an admin account: admin / admin-dev-password
 cd api
 Database__Provider=Sqlite ASPNETCORE_ENVIRONMENT=Development dotnet run --project src/OpenIron.Api
 
@@ -88,6 +93,10 @@ All routes are under `/api`. Everything except register and login needs an `Auth
 | `GET/POST /workouts`, `GET/PUT/DELETE /workouts/{id}` | Logged workouts |
 | `GET /workouts/draft/{templateId}` | A template pre-filled with your last-used weights |
 | `GET/POST /body-weight`, `DELETE /body-weight/{id}` | Body weight (one entry per day; logging a day again replaces it) |
+| `PUT /account/password`, `POST /account/delete` | Change your password, delete your account |
+| `GET /auth/config` | Public: whether registration is open |
+| `GET /admin/overview`, `GET/PUT /admin/settings` | Admin only: server stats and the registration switch |
+| `GET /admin/users`, `PUT/DELETE /admin/users/{id}`, `POST /admin/users/{id}/reset-password` | Admin only: manage users (never your own account) |
 | `GET/PUT /community/settings` | Whether you share your activity (default off) |
 | `GET /community/users`, `GET /community/users/{username}` | Members who share, and one member's general progress |
 | `GET /progress/exercises`, `GET /progress/exercises/{id}`, `GET /progress/overview` | Chart and dashboard data |

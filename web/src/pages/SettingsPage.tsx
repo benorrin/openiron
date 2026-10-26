@@ -31,13 +31,17 @@ function AccountSection() {
   async function submit(e: FormEvent) {
     e.preventDefault()
     setDone(false)
-    const auth = await change.mutateAsync({ currentPassword: current, newPassword: next })
-    // Changing the password signs out every other session; keep this one going on the new token.
-    applySession(auth)
-    setCurrent('')
-    setNext('')
-    setConfirm('')
-    setDone(true)
+    try {
+      const auth = await change.mutateAsync({ currentPassword: current, newPassword: next })
+      // Changing the password signs out every other session; keep this one going on the new token.
+      applySession(auth)
+      setCurrent('')
+      setNext('')
+      setConfirm('')
+      setDone(true)
+    } catch {
+      // Shown from change.error.
+    }
   }
 
   return (
@@ -112,8 +116,12 @@ function DeleteAccountSection() {
   async function submit(e: FormEvent) {
     e.preventDefault()
     if (!confirm('Permanently delete your account and all your workouts, templates and body weight entries? This cannot be undone.')) return
-    await remove.mutateAsync(password)
-    logout()
+    try {
+      await remove.mutateAsync(password)
+      logout()
+    } catch {
+      // Shown from remove.error.
+    }
   }
 
   return (
