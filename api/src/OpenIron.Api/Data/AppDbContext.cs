@@ -10,6 +10,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<WorkoutTemplate> WorkoutTemplates => Set<WorkoutTemplate>();
     public DbSet<Workout> Workouts => Set<Workout>();
     public DbSet<BodyWeightEntry> BodyWeightEntries => Set<BodyWeightEntry>();
+    public DbSet<ServerSettings> ServerSettings => Set<ServerSettings>();
 
     protected override void OnModelCreating(ModelBuilder b)
     {
@@ -19,6 +20,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.Property(u => u.Username).HasMaxLength(32);
             e.Property(u => u.NormalizedUsername).HasMaxLength(32);
         });
+
+        b.Entity<ServerSettings>(e => e.Property(x => x.Id).ValueGeneratedNever());
 
         b.Entity<Exercise>(e =>
         {

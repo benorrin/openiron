@@ -9,6 +9,9 @@ namespace OpenIron.Api.Auth;
 
 public class TokenService(IOptions<JwtOptions> options)
 {
+    public const string SubjectClaim = JwtRegisteredClaimNames.Sub;
+    public const string StampClaim = "stamp";
+
     private readonly JwtOptions _options = options.Value;
 
     public (string Token, DateTime ExpiresAt) Create(User user)
@@ -21,6 +24,7 @@ public class TokenService(IOptions<JwtOptions> options)
             [
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.UniqueName, user.Username),
+                new Claim(StampClaim, user.SecurityStamp.ToString()),
             ],
             expires: expires,
             signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256));

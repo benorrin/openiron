@@ -71,6 +71,19 @@ namespace OpenIron.Api.Data.Migrations
                     b.ToTable("Exercises");
                 });
 
+            modelBuilder.Entity("OpenIron.Api.Data.Entities.ServerSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("RegistrationOpen")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ServerSettings");
+                });
+
             modelBuilder.Entity("OpenIron.Api.Data.Entities.TemplateExercise", b =>
                 {
                     b.Property<Guid>("Id")
@@ -110,6 +123,12 @@ namespace OpenIron.Api.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDisabled")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("NormalizedUsername")
                         .IsRequired()
                         .HasMaxLength(32)
@@ -118,6 +137,9 @@ namespace OpenIron.Api.Data.Migrations
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<Guid>("SecurityStamp")
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("ShareActivity")
                         .HasColumnType("boolean");

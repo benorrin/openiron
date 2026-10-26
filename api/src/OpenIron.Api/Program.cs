@@ -1,7 +1,9 @@
+using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using OpenIron.Api.Auth;
 using OpenIron.Api.Data;
@@ -26,6 +28,7 @@ builder.Services.AddOptions<JwtOptions>()
 
 builder.Services.AddSingleton<TokenService>();
 builder.Services.AddScoped<ActivityService>();
+builder.Services.Configure<AdminOptions>(builder.Configuration.GetSection(AdminOptions.Section));
 builder.Services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
 
 var jwt = builder.Configuration.GetSection(JwtOptions.Section).Get<JwtOptions>() ?? new JwtOptions();
@@ -41,7 +44,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = jwt.Audience,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Secret)),
             ClockSkew = TimeSpan.FromMinutes(1),
+            RoleClaimType = ClaimTypes.Role,
         };
+        options.Events = new JwtBearerEvents { OnTokenValidated = SessionValidator.ValidateAsync };
     });
 builder.Services.AddAuthorization();
 
@@ -56,6 +61,11 @@ using (var scope = app.Services.CreateScope())
     if (db.Database.IsNpgsql()) await db.Database.MigrateAsync();
     else await db.Database.EnsureCreatedAsync();
     await SeedData.EnsureAsync(db);
+    await AdminSeeder.EnsureAsync(
+        db,
+        scope.ServiceProvider.GetRequiredService<IPasswordHasher<User>>(),
+        scope.ServiceProvider.GetRequiredService<IOptions<AdminOptions>>().Value,
+        app.Logger);
 }
 
 app.UseAuthentication();

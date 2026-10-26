@@ -10,6 +10,8 @@ public record RegisterRequest(
 
 public record LoginRequest([Required] string Username, [Required] string Password);
 
-public record UserDto(Guid Id, string Username);
+public record UserDto(Guid Id, string Username, bool IsAdmin);
 
 public record AuthResponse(string Token, DateTime ExpiresAt, UserDto User);
+
+public record AuthConfigDto(bool RegistrationOpen);
