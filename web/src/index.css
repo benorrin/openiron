@@ -635,3 +635,38 @@ input.check {
   flex: none;
   accent-color: var(--accent);
 }
+
+/* Settings and admin */
+
+.topbar-link {
+  color: var(--ink-2);
+  text-decoration: none;
+  font-size: 0.875rem;
+  padding: 4px 8px;
+  border-radius: 6px;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topbar-link:hover,
+.topbar-link.active {
+  background: var(--hover);
+  color: var(--ink);
+}
+
+.success {
+  color: var(--good);
+  font-size: 0.875rem;
+}
+
+.danger-zone {
+  border-color: var(--danger);
+}
+
+.pill-danger {
+  background: none;
+  border: 1px solid var(--danger);
+  color: var(--danger);
+}

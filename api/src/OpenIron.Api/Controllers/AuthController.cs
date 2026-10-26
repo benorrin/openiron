@@ -13,9 +13,17 @@ namespace OpenIron.Api.Controllers;
 [Route("api/auth")]
 public class AuthController(AppDbContext db, TokenService tokens, IPasswordHasher<User> hasher) : ControllerBase
 {
+    /// <summary>Public, so the login page knows whether to offer account creation.</summary>
+    [HttpGet("config")]
+    public async Task<AuthConfigDto> Config() =>
+        new((await db.ServerSettings.AsNoTracking().SingleAsync()).RegistrationOpen);
+
     [HttpPost("register")]
     public async Task<ActionResult<AuthResponse>> Register(RegisterRequest request)
     {
+        if (!(await db.ServerSettings.AsNoTracking().SingleAsync()).RegistrationOpen)
+            return StatusCode(StatusCodes.Status403Forbidden, new ProblemDetails { Title = "Registration is closed on this server." });
+
         var normalized = request.Username.ToLowerInvariant();
         if (await db.Users.AnyAsync(u => u.NormalizedUsername == normalized))
             return Conflict(new ProblemDetails { Title = "That username is already taken." });
@@ -50,6 +58,10 @@ public class AuthController(AppDbContext db, TokenService tokens, IPasswordHashe
         if (user is null || result == PasswordVerificationResult.Failed)
             return Unauthorized(new ProblemDetails { Title = "Invalid username or password." });
 
+        // Checked after the password so a wrong guess can't be used to discover which accounts are disabled.
+        if (user.IsDisabled)
+            return StatusCode(StatusCodes.Status403Forbidden, new ProblemDetails { Title = "This account has been disabled." });
+
         if (result == PasswordVerificationResult.SuccessRehashNeeded)
         {
             user.PasswordHash = hasher.HashPassword(user, request.Password);
@@ -64,12 +76,12 @@ public class AuthController(AppDbContext db, TokenService tokens, IPasswordHashe
     public async Task<ActionResult<UserDto>> Me()
     {
         var user = await db.Users.FindAsync(User.GetUserId());
-        return user is null ? Unauthorized() : new UserDto(user.Id, user.Username);
+        return user is null ? Unauthorized() : new UserDto(user.Id, user.Username, user.IsAdmin);
     }
 
     private AuthResponse Issue(User user)
     {
         var (token, expires) = tokens.Create(user);
-        return new AuthResponse(token, expires, new UserDto(user.Id, user.Username));
+        return new AuthResponse(token, expires, new UserDto(user.Id, user.Username, user.IsAdmin));
     }
 }

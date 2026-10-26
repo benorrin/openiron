@@ -32,6 +32,13 @@ public class ApiFactory : WebApplicationFactory<Program>
         });
     }
 
+    /// <summary>Runs a block against the database directly, for state the API has no endpoint for yet.</summary>
+    public async Task WithDbAsync(Func<AppDbContext, Task> action)
+    {
+        using var scope = Services.CreateScope();
+        await action(scope.ServiceProvider.GetRequiredService<AppDbContext>());
+    }
+
     protected override void Dispose(bool disposing)
     {
         base.Dispose(disposing);

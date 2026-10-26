@@ -3,6 +3,7 @@
 export interface User {
   id: string
   username: string
+  isAdmin: boolean
 }
 
 export interface AuthResponse {
@@ -167,4 +168,25 @@ export interface CommunityProfile {
   weeks: WeeklyActivity[]
   topLifts: TopLift[]
   recentWorkouts: RecentWorkout[]
+}
+
+export interface AdminUser {
+  id: string
+  username: string
+  createdAt: string
+  isAdmin: boolean
+  isDisabled: boolean
+  shareActivity: boolean
+  isYou: boolean
+  workoutCount: number
+  lastWorkoutAt: string | null
+}
+
+export interface AdminOverview {
+  totalUsers: number
+  adminCount: number
+  disabledUsers: number
+  totalWorkouts: number
+  workoutsLast30Days: number
+  registrationOpen: boolean
 }

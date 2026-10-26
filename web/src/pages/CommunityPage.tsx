@@ -1,41 +1,27 @@
 import { Link } from 'react-router-dom'
-import { useCommunityMembers, useCommunitySettings, useUpdateCommunitySettings } from '../api/hooks'
+import { useCommunityMembers, useCommunitySettings } from '../api/hooks'
 import { formatDate, formatVolume } from '../lib/format'
 
 export function CommunityPage() {
   const { data: settings } = useCommunitySettings()
-  const update = useUpdateCommunitySettings()
   const { data: members, isLoading, error } = useCommunityMembers()
 
   return (
     <div className="page">
       <h1>Community</h1>
 
-      <section className="card stack">
-        <label className="row" style={{ flexWrap: 'nowrap', alignItems: 'flex-start' }}>
-          <input
-            type="checkbox"
-            className="check"
-            checked={settings?.shareActivity ?? false}
-            disabled={!settings || update.isPending}
-            onChange={(e) => update.mutate(e.target.checked)}
-          />
-          <span>
-            <strong>Share my training with others on this server</strong>
-            <span className="muted" style={{ display: 'block' }}>
-              Other members can see your workout counts, volume, main lifts and recent workout names. Your body weight and
-              notes are never shared. This is off by default and you can turn it off at any time.
-            </span>
-          </span>
-        </label>
-        {update.error && <p className="error" role="alert">{update.error.message}</p>}
-      </section>
+      <p className="muted">
+        {settings?.shareActivity
+          ? "You're sharing your training with everyone on this server. "
+          : "You're not sharing your training, so you don't appear here. "}
+        <Link to="/settings">Change this in Settings</Link>.
+      </p>
 
       {isLoading && <p className="empty">Loading…</p>}
       {error && <p className="error">{error.message}</p>}
       {members?.length === 0 && (
         <div className="card empty">
-          <p>Nobody is sharing yet. Turn sharing on above to appear here.</p>
+          <p>Nobody is sharing yet. Turn sharing on in Settings to appear here.</p>
         </div>
       )}
 

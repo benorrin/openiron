@@ -24,14 +24,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .finally(() => setLoading(false))
   }, [logout])
 
+  const applySession = useCallback((auth: AuthResponse) => {
+    setToken(auth.token)
+    setUser(auth.user)
+  }, [])
+
   const authenticate = useCallback(
     async (path: string, username: string, password: string) => {
       const auth = await api<AuthResponse>(path, { method: 'POST', body: { username, password } })
       queryClient.clear()
-      setToken(auth.token)
-      setUser(auth.user)
+      applySession(auth)
     },
-    [queryClient],
+    [queryClient, applySession],
   )
 
   const value = useMemo<AuthState>(
@@ -40,9 +44,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loading,
       login: (u, p) => authenticate('/auth/login', u, p),
       register: (u, p) => authenticate('/auth/register', u, p),
+      applySession,
       logout,
     }),
-    [user, loading, authenticate, logout],
+    [user, loading, authenticate, applySession, logout],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

@@ -44,9 +44,10 @@ public static class SeedData
 
     public static async Task EnsureAsync(AppDbContext db)
     {
-        if (await db.Exercises.AnyAsync(e => e.UserId == null)) return;
+        if (!await db.ServerSettings.AnyAsync()) db.ServerSettings.Add(new ServerSettings());
+        if (!await db.Exercises.AnyAsync(e => e.UserId == null))
+            db.Exercises.AddRange(Library.Select(x => new Exercise { Name = x.Name, MuscleGroup = x.MuscleGroup }));
 
-        db.Exercises.AddRange(Library.Select(x => new Exercise { Name = x.Name, MuscleGroup = x.MuscleGroup }));
         await db.SaveChangesAsync();
     }
 }

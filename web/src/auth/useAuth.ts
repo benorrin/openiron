@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import type { User } from '../api/types'
+import type { AuthResponse, User } from '../api/types'
 
 export interface AuthState {
   user: User | null
@@ -7,6 +7,8 @@ export interface AuthState {
   loading: boolean
   login: (username: string, password: string) => Promise<void>
   register: (username: string, password: string) => Promise<void>
+  /** Adopts a freshly issued session, e.g. after a password change replaces the old token. */
+  applySession: (auth: AuthResponse) => void
   logout: () => void
 }
 

@@ -1,9 +1,13 @@
 import { useState, type FormEvent } from 'react'
+import { useAuthConfig } from '../api/hooks'
 import { useAuth } from '../auth/useAuth'
 
 export function LoginPage() {
   const { login, register } = useAuth()
-  const [mode, setMode] = useState<'login' | 'register'>('login')
+  const { data: config } = useAuthConfig()
+  const registrationOpen = config?.registrationOpen ?? true
+  const [chosen, setMode] = useState<'login' | 'register'>('login')
+  const mode = registrationOpen ? chosen : 'login'
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -28,14 +32,20 @@ export function LoginPage() {
         <img src="/favicon.svg" alt="" />
         OpenIron
       </div>
-      <div className="tabs" role="tablist">
-        <button role="tab" aria-selected={mode === 'login'} onClick={() => setMode('login')}>
-          Log in
-        </button>
-        <button role="tab" aria-selected={mode === 'register'} onClick={() => setMode('register')}>
-          Create account
-        </button>
-      </div>
+      {registrationOpen ? (
+        <div className="tabs" role="tablist">
+          <button role="tab" aria-selected={mode === 'login'} onClick={() => setMode('login')}>
+            Log in
+          </button>
+          <button role="tab" aria-selected={mode === 'register'} onClick={() => setMode('register')}>
+            Create account
+          </button>
+        </div>
+      ) : (
+        <p className="muted" style={{ textAlign: 'center' }}>
+          New accounts are closed on this server. Ask an admin if you need one.
+        </p>
+      )}
       <form className="card stack" onSubmit={submit}>
         <label className="field">
           Username
