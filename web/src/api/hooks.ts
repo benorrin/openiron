@@ -1,6 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from './client'
 import type {
+  AdminOverview,
+  AdminUser,
+  AuthResponse,
   BodyWeightEntry,
   CommunityMember,
   CommunityProfile,
@@ -186,3 +189,60 @@ export function useCommunityProfile(username: string | undefined) {
     enabled: username !== undefined,
   })
 }
+
+export function useAuthConfig() {
+  return useQuery({
+    queryKey: ['auth', 'config'],
+    queryFn: () => api<{ registrationOpen: boolean }>('/auth/config'),
+  })
+}
+
+export function useChangePassword() {
+  return useMutation({
+    mutationFn: (input: { currentPassword: string; newPassword: string }) =>
+      api<AuthResponse>('/account/password', { method: 'PUT', body: input }),
+  })
+}
+
+export function useDeleteAccount() {
+  return useMutation({
+    mutationFn: (password: string) => api<void>('/account/delete', { method: 'POST', body: { password } }),
+  })
+}
+
+export function useAdminOverview() {
+  return useQuery({ queryKey: ['admin', 'overview'], queryFn: () => api<AdminOverview>('/admin/overview') })
+}
+
+export function useAdminUsers() {
+  return useQuery({ queryKey: ['admin', 'users'], queryFn: () => api<AdminUser[]>('/admin/users') })
+}
+
+function useAdminMutation<TInput>(fn: (input: TInput) => Promise<unknown>) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: fn,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin'] }),
+  })
+}
+
+export const useUpdateAdminUser = () =>
+  useAdminMutation((input: { id: string; isAdmin?: boolean; isDisabled?: boolean }) =>
+    api<AdminUser>(`/admin/users/${input.id}`, {
+      method: 'PUT',
+      body: { isAdmin: input.isAdmin, isDisabled: input.isDisabled },
+    }),
+  )
+
+export const useResetUserPassword = () =>
+  useAdminMutation((input: { id: string; newPassword: string }) =>
+    api<void>(`/admin/users/${input.id}/reset-password`, { method: 'POST', body: { newPassword: input.newPassword } }),
+  )
+
+export const useDeleteAdminUser = () =>
+  useAdminMutation((id: string) => api<void>(`/admin/users/${id}`, { method: 'DELETE' }))
+
+export const useSetRegistrationOpen = () =>
+  useAdminMutation((registrationOpen: boolean) =>
+    api<{ registrationOpen: boolean }>('/admin/settings', { method: 'PUT', body: { registrationOpen } }),
+  )

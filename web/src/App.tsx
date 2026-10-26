@@ -9,6 +9,7 @@ import { LoginPage } from './pages/LoginPage'
 import { WorkoutEditPage } from './pages/WorkoutEditPage'
 import { WorkoutsPage } from './pages/WorkoutsPage'
 import { ProgressPage } from './pages/ProgressPage'
+import { SettingsPage } from './pages/SettingsPage'
 import { TemplateEditPage } from './pages/TemplateEditPage'
 import { TemplatesPage } from './pages/TemplatesPage'
 
@@ -32,6 +33,7 @@ export function App() {
         <Route path="body-weight" element={<BodyWeightPage />} />
         <Route path="community" element={<CommunityPage />} />
         <Route path="community/:username" element={<CommunityProfilePage />} />
+        <Route path="settings" element={<SettingsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

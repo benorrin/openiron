@@ -29,8 +29,15 @@ export function Layout() {
             ))}
           </nav>
         </div>
-        <div className="row">
-          <span className="muted">{user?.username}</span>
+        <div className="row" style={{ flexWrap: 'nowrap' }}>
+          {user?.isAdmin && (
+            <NavLink to="/admin" className="topbar-link">
+              Admin
+            </NavLink>
+          )}
+          <NavLink to="/settings" className="topbar-link" aria-label="Settings">
+            {user?.username}
+          </NavLink>
           <button className="btn small ghost" onClick={logout}>
             Log out
           </button>
