@@ -617,12 +617,12 @@ details.disclosure[open] > summary {
 }
 
 /* Weight and Nutrition share a "Body" tab on a phone, so a switch sits at the top of both pages. */
-.body-tabs {
+.section-tabs {
   align-self: flex-start;
 }
 
 @media (min-width: 900px) {
-  .body-tabs {
+  .section-tabs {
     display: none;
   }
 }
