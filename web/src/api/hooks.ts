@@ -7,6 +7,8 @@ import type {
   BodyWeightEntry,
   CommunityMember,
   CommunityProfile,
+  CreatedInvite,
+  Invite,
   Exercise,
   ExerciseProgress,
   Overview,
@@ -218,7 +220,7 @@ export function useAdminUsers() {
   return useQuery({ queryKey: ['admin', 'users'], queryFn: () => api<AdminUser[]>('/admin/users') })
 }
 
-function useAdminMutation<TInput>(fn: (input: TInput) => Promise<unknown>) {
+function useAdminMutation<TInput, TResult>(fn: (input: TInput) => Promise<TResult>) {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: fn,
@@ -246,3 +248,15 @@ export const useSetRegistrationOpen = () =>
   useAdminMutation((registrationOpen: boolean) =>
     api<{ registrationOpen: boolean }>('/admin/settings', { method: 'PUT', body: { registrationOpen } }),
   )
+
+export function useInvites() {
+  return useQuery({ queryKey: ['admin', 'invites'], queryFn: () => api<Invite[]>('/admin/invites') })
+}
+
+export const useCreateInvite = () =>
+  useAdminMutation((input: { note: string | null; expiresInDays: number | null }) =>
+    api<CreatedInvite>('/admin/invites', { method: 'POST', body: input }),
+  )
+
+export const useRevokeInvite = () =>
+  useAdminMutation((id: string) => api<void>(`/admin/invites/${id}`, { method: 'DELETE' }))

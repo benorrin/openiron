@@ -30,8 +30,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const authenticate = useCallback(
-    async (path: string, username: string, password: string) => {
-      const auth = await api<AuthResponse>(path, { method: 'POST', body: { username, password } })
+    async (path: string, body: { username: string; password: string; inviteCode?: string }) => {
+      const auth = await api<AuthResponse>(path, { method: 'POST', body })
       queryClient.clear()
       applySession(auth)
     },
@@ -42,8 +42,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     () => ({
       user,
       loading,
-      login: (u, p) => authenticate('/auth/login', u, p),
-      register: (u, p) => authenticate('/auth/register', u, p),
+      login: (username, password) => authenticate('/auth/login', { username, password }),
+      register: (username, password, inviteCode) =>
+        authenticate('/auth/register', { username, password, inviteCode: inviteCode?.trim() || undefined }),
       applySession,
       logout,
     }),

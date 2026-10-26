@@ -190,3 +190,21 @@ export interface AdminOverview {
   workoutsLast30Days: number
   registrationOpen: boolean
 }
+
+export type InviteStatus = 'active' | 'used' | 'expired' | 'revoked'
+
+export interface Invite {
+  id: string
+  note: string | null
+  createdAt: string
+  expiresAt: string | null
+  status: InviteStatus
+  usedBy: string | null
+  usedAt: string | null
+}
+
+export interface CreatedInvite {
+  invite: Invite
+  /** Only ever returned when the invite is created. */
+  code: string
+}
