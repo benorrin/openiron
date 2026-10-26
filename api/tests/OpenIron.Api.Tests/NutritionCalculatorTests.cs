@@ -191,8 +191,19 @@ public class NutritionCalculatorTests
 
         Assert.Equal(ProgressStatus.SlowerThanPlanned, plan.Progress.Status);
         Assert.Equal(2320, plan.EstimatedMaintenanceKcal);
-        Assert.Equal(-450, plan.Progress.SuggestedAdjustmentKcal); // 2320 - 550 = 1770 vs 2210
+        Assert.Equal(-440, plan.Progress.SuggestedAdjustmentKcal); // 2320 - 550 = 1770 vs 2210
         Assert.Equal(1770, plan.TargetKcal);
+    }
+
+    [Fact]
+    public void The_suggested_change_is_exactly_the_gap_to_the_new_target()
+    {
+        foreach (var weeklyChange in new[] { -0.1, -0.2, -0.9, 0.3 })
+        {
+            var plan = Plan(Input(Daily(40, 79, weeklyChange), applied: 2210, appliedDaysAgo: 40));
+            if (plan.Progress.SuggestedAdjustmentKcal is { } change)
+                Assert.Equal(plan.TargetKcal - 2210, change);
+        }
     }
 
     [Fact]
@@ -201,7 +212,7 @@ public class NutritionCalculatorTests
         var plan = Plan(Input(Daily(40, 78, -0.9), applied: 2210, appliedDaysAgo: 40));
 
         Assert.Equal(ProgressStatus.FasterThanPlanned, plan.Progress.Status);
-        Assert.Equal(450, plan.Progress.SuggestedAdjustmentKcal);
+        Assert.Equal(440, plan.Progress.SuggestedAdjustmentKcal);
         Assert.Equal(2650, plan.TargetKcal); // 2210 + 990 = 3200 maintenance, less 550
     }
 

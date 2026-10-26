@@ -237,7 +237,8 @@ public static class NutritionCalculator
                 if (status != ProgressStatus.OnTrack)
                 {
                     var change = target - input.AppliedKcal.Value;
-                    if (Math.Abs(change) >= 100) suggestion = (int)RoundTo(change, 25);
+                    // Exact, so "aim for X" and "change by Y" always agree.
+                    if (Math.Abs(change) >= 100) suggestion = change;
                 }
             }
         }
