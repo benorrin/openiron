@@ -1,15 +1,12 @@
-version: '3.8'
-
 services:
   postgres:
-    image: postgres:15-alpine
-    container_name: openiron-postgres
+    image: postgres:16-alpine
     environment:
       POSTGRES_USER: openiron
-      POSTGRES_PASSWORD: openiron_dev_password
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
       POSTGRES_DB: openiron
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -17,26 +14,25 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
 
-  server:
-    build: ./server
-    container_name: openiron-server
+  api:
+    build: ./api
     environment:
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_USER: openiron
-      DB_PASSWORD: openiron_dev_password
-      DB_NAME: openiron
-      JWT_SECRET: your_jwt_secret_key_change_this
-      ADMIN_USERNAME: admin
-      ADMIN_PASSWORD: admin_password_change_this
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./uploads:/uploads
+      ConnectionStrings__Default: Host=postgres;Port=5432;Database=openiron;Username=openiron;Password=${POSTGRES_PASSWORD}
+      Jwt__Secret: ${JWT_SECRET:?Set JWT_SECRET in .env (at least 32 characters)}
     depends_on:
       postgres:
         condition: service_healthy
+    restart: unless-stopped
+
+  web:
+    build: ./web
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    depends_on:
+      - api
+    restart: unless-stopped
 
 volumes:
   postgres_data:

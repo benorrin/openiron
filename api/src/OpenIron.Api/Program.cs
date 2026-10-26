@@ -27,6 +27,8 @@ builder.Services.AddSingleton<TokenService>();
 builder.Services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
 
 var jwt = builder.Configuration.GetSection(JwtOptions.Section).Get<JwtOptions>() ?? new JwtOptions();
+if (jwt.Secret.Length < 32)
+    throw new InvalidOperationException("Jwt:Secret must be configured (set Jwt__Secret) with at least 32 characters.");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
