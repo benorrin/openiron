@@ -2,13 +2,14 @@ import { Link } from 'react-router-dom'
 import { useOverview, useTemplates, useWorkouts } from '../api/hooks'
 import { BarChart } from '../components/charts/BarChart'
 import { formatDate, formatKg, formatShortDate, formatVolume } from '../lib/format'
+import { PageSkeleton } from '../components/Skeleton'
 
 export function HomePage() {
   const { data: overview, isLoading } = useOverview()
   const { data: templates = [] } = useTemplates()
   const { data: workouts = [] } = useWorkouts()
 
-  if (isLoading || !overview) return <p className="empty">Loading…</p>
+  if (isLoading || !overview) return <PageSkeleton />
 
   const change = overview.bodyWeightChangeKg
 

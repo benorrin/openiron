@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router-dom'
 import { useCommunityProfile } from '../api/hooks'
 import { BarChart } from '../components/charts/BarChart'
 import { formatDate, formatKg, formatShortDate, formatVolume } from '../lib/format'
+import { PageSkeleton } from '../components/Skeleton'
 
 // Bodyweight exercises are logged at 0 kg, which would read as a failed lift.
 const lift = (kg: number) => (kg > 0 ? `${formatKg(kg)} kg` : '–')
@@ -10,7 +11,7 @@ export function CommunityProfilePage() {
   const { username } = useParams()
   const { data: profile, isLoading, error } = useCommunityProfile(username)
 
-  if (isLoading) return <p className="empty">Loading…</p>
+  if (isLoading) return <PageSkeleton />
   if (!profile)
     return (
       <div className="page">

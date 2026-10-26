@@ -6,6 +6,7 @@ import { LineChart } from '../components/charts/LineChart'
 import { RangeFilter } from '../components/RangeFilter'
 import { RANGES, withinRange } from '../lib/range'
 import { formatDate, formatKg, formatShortDate, formatVolume } from '../lib/format'
+import { PageSkeleton } from '../components/Skeleton'
 
 export function ProgressPage() {
   const { data: exercises, isLoading } = useProgressExercises()
@@ -16,7 +17,7 @@ export function ProgressPage() {
   const exerciseId = picked ?? exercises?.[0]?.exerciseId
   const { data: progress } = useExerciseProgress(exerciseId)
 
-  if (isLoading) return <p className="empty">Loading…</p>
+  if (isLoading) return <PageSkeleton />
 
   if (!exercises || exercises.length === 0) {
     return (

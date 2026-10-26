@@ -116,13 +116,14 @@ export function LineChart({ series, ariaLabel, unit, formatX, height = 240, area
 
           {area && series[0] && series[0].points.length > 1 && (
             <path
+              className="chart-area"
               d={`${pathFor(series[0])}L${sx(series[0].points[series[0].points.length - 1].x)},${M.top + innerH}L${sx(series[0].points[0].x)},${M.top + innerH}Z`}
               fill={series[0].color}
               opacity={0.1}
             />
           )}
           {series.map((s) => (
-            <path key={s.id} d={pathFor(s)} fill="none" stroke={s.color} strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
+            <path key={s.id} className="chart-line" pathLength={1} d={pathFor(s)} fill="none" stroke={s.color} strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
           ))}
           {series.map((s) =>
             s.points.map((p) => (

@@ -11,6 +11,7 @@ import {
 import type { AdminUser } from '../api/types'
 import { useAuth } from '../auth/useAuth'
 import { formatDate } from '../lib/format'
+import { PageSkeleton } from '../components/Skeleton'
 
 export function AdminPage() {
   const { user } = useAuth()
@@ -30,7 +31,7 @@ function OverviewSection() {
   const { data: overview } = useAdminOverview()
   const setOpen = useSetRegistrationOpen()
 
-  if (!overview) return <p className="empty">Loading…</p>
+  if (!overview) return <PageSkeleton />
 
   return (
     <>
@@ -51,10 +52,11 @@ function OverviewSection() {
       </div>
 
       <section className="card stack">
-        <label className="row" style={{ flexWrap: 'nowrap', alignItems: 'flex-start' }}>
+        <label className="switch-row">
           <input
             type="checkbox"
-            className="check"
+            className="switch"
+          role="switch"
             checked={overview.registrationOpen}
             disabled={setOpen.isPending}
             onChange={(e) => setOpen.mutate(e.target.checked)}
@@ -81,7 +83,7 @@ function UsersSection() {
         <h2>Users</h2>
         <span className="muted">Workout counts only; admins can't see anyone's training.</span>
       </div>
-      {isLoading && <p className="empty">Loading…</p>}
+      {isLoading && <PageSkeleton />}
       {error && <p className="error">{error.message}</p>}
       {users && (
         <ul className="list">

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useCommunityMembers, useCommunitySettings } from '../api/hooks'
 import { formatDate, formatVolume } from '../lib/format'
+import { PageSkeleton } from '../components/Skeleton'
 
 export function CommunityPage() {
   const { data: settings } = useCommunitySettings()
@@ -17,7 +18,7 @@ export function CommunityPage() {
         <Link to="/settings">Change this in Settings</Link>.
       </p>
 
-      {isLoading && <p className="empty">Loading…</p>}
+      {isLoading && <PageSkeleton />}
       {error && <p className="error">{error.message}</p>}
       {members?.length === 0 && (
         <div className="card empty">

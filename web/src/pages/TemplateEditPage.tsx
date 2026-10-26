@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useSaveTemplate, useTemplate } from '../api/hooks'
 import type { Exercise, Template, TemplateInput } from '../api/types'
 import { ExercisePicker } from '../components/ExercisePicker'
+import { PageSkeleton } from '../components/Skeleton'
 
 interface Row {
   exerciseId: string
@@ -15,7 +16,7 @@ export function TemplateEditPage() {
   const { id } = useParams()
   const { data: existing, isLoading, error } = useTemplate(id)
 
-  if (id && isLoading) return <p className="empty">Loading…</p>
+  if (id && isLoading) return <PageSkeleton />
   if (id && !existing) return <p className="error page">{error?.message ?? 'Template not found.'}</p>
   return <TemplateForm key={id ?? 'new'} id={id} existing={existing} />
 }

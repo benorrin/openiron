@@ -4,6 +4,7 @@ import { LineChart } from '../components/charts/LineChart'
 import { RangeFilter } from '../components/RangeFilter'
 import { RANGES, withinRange } from '../lib/range'
 import { formatDate, formatKg, formatShortDate, parseDate, todayIso } from '../lib/format'
+import { PageSkeleton } from '../components/Skeleton'
 
 const HISTORY_PREVIEW = 10
 
@@ -56,7 +57,7 @@ export function BodyWeightPage() {
         {log.error && <p className="error grow" role="alert">{log.error.message}</p>}
       </form>
 
-      {isLoading && <p className="empty">Loading…</p>}
+      {isLoading && <PageSkeleton />}
       {error && <p className="error">{error.message}</p>}
       {!isLoading && entries.length === 0 && (
         <div className="card empty">

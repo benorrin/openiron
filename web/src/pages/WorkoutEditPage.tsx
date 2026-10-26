@@ -4,6 +4,7 @@ import { useDeleteWorkout, useSaveWorkout, useWorkout, useWorkoutDraft } from '.
 import type { Exercise, WorkoutExercise, WorkoutInput } from '../api/types'
 import { ExercisePicker } from '../components/ExercisePicker'
 import { formatKg, formatVolume, fromLocalInput, toLocalInput } from '../lib/format'
+import { PageSkeleton } from '../components/Skeleton'
 
 interface SetRow {
   reps: string
@@ -42,7 +43,7 @@ export function WorkoutEditPage() {
   const draft = useWorkoutDraft(templateId)
 
   if (id) {
-    if (existing.isLoading) return <p className="empty">Loading…</p>
+    if (existing.isLoading) return <PageSkeleton />
     if (!existing.data) return <p className="error page">{existing.error?.message ?? 'Workout not found.'}</p>
     const w = existing.data
     return (
@@ -62,7 +63,7 @@ export function WorkoutEditPage() {
   }
 
   if (templateId) {
-    if (draft.isLoading) return <p className="empty">Loading…</p>
+    if (draft.isLoading) return <PageSkeleton />
     if (!draft.data) return <p className="error page">{draft.error?.message ?? 'Template not found.'}</p>
     return (
       <WorkoutForm

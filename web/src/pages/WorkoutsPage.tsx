@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useTemplates, useWorkouts } from '../api/hooks'
 import { formatDate, formatVolume } from '../lib/format'
+import { PageSkeleton } from '../components/Skeleton'
 
 export function WorkoutsPage() {
   const { data: workouts, isLoading, error } = useWorkouts()
@@ -33,7 +34,7 @@ export function WorkoutsPage() {
         </div>
       </div>
 
-      {isLoading && <p className="empty">Loading…</p>}
+      {isLoading && <PageSkeleton />}
       {error && <p className="error">{error.message}</p>}
       {workouts?.length === 0 && (
         <div className="card empty">

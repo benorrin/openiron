@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useDeleteTemplate, useTemplates } from '../api/hooks'
+import { PageSkeleton } from '../components/Skeleton'
 
 export function TemplatesPage() {
   const { data: templates, isLoading, error } = useTemplates()
@@ -14,7 +15,7 @@ export function TemplatesPage() {
         </Link>
       </div>
 
-      {isLoading && <p className="empty">Loading…</p>}
+      {isLoading && <PageSkeleton />}
       {error && <p className="error">{error.message}</p>}
       {templates?.length === 0 && (
         <div className="card empty">

@@ -1,0 +1,35 @@
+.page {
+  animation: rise 0.4s var(--ease) both;
+}
+
+/* Workout logging */
+
+.set-row {
+  flex-wrap: nowrap;
+}
+
+.set-num {
+  width: 1.5rem;
+  text-align: center;
+}
+
+/* Sign in */
+
+.auth {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 56px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.auth .brand {
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.auth .brand img {
+  width: 32px;
+  height: 32px;
+}
