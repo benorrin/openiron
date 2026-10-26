@@ -1,13 +1,27 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../auth/useAuth'
 import { Icon, type IconName } from './Icon'
 
-const links: { to: string; label: string; icon: IconName; end?: boolean }[] = [
+interface NavItem {
+  to: string
+  label: string
+  icon: IconName
+  end?: boolean
+  /** A shorter or broader name for the phone tab bar, which has less room. */
+  tabLabel?: string
+  /** Other routes that should light up this tab. */
+  alsoActiveOn?: string[]
+  /** Reached from another tab on a phone rather than having its own. */
+  sidebarOnly?: boolean
+}
+
+const links: NavItem[] = [
   { to: '/', label: 'Home', icon: 'home', end: true },
   { to: '/workouts', label: 'Workouts', icon: 'dumbbell' },
   { to: '/templates', label: 'Templates', icon: 'clipboard' },
   { to: '/progress', label: 'Progress', icon: 'trending' },
-  { to: '/body-weight', label: 'Weight', icon: 'scale' },
+  { to: '/body-weight', label: 'Weight', icon: 'scale', tabLabel: 'Body', alsoActiveOn: ['/nutrition'] },
+  { to: '/nutrition', label: 'Nutrition', icon: 'flame', sidebarOnly: true },
   { to: '/community', label: 'Community', icon: 'users' },
 ]
 
@@ -27,6 +41,7 @@ function Brand() {
 export function Layout() {
   const { user, logout } = useAuth()
   const initial = user?.username.charAt(0).toUpperCase()
+  const { pathname } = useLocation()
 
   return (
     <div className="shell">
@@ -86,12 +101,21 @@ export function Layout() {
       </main>
 
       <nav className="tabbar" aria-label="Main (mobile)">
-        {links.map((l) => (
-          <NavLink key={l.to} to={l.to} end={l.end} className="tab">
-            <Icon name={l.icon} size={22} />
-            {l.label}
-          </NavLink>
-        ))}
+        {links
+          .filter((l) => !l.sidebarOnly)
+          .map((l) => (
+            <NavLink
+              key={l.to}
+              to={l.to}
+              end={l.end}
+              className={({ isActive }) =>
+                `tab${isActive || l.alsoActiveOn?.some((p) => pathname.startsWith(p)) ? ' active' : ''}`
+              }
+            >
+              <Icon name={l.icon} size={22} />
+              {l.tabLabel ?? l.label}
+            </NavLink>
+          ))}
       </nav>
     </div>
   )

@@ -128,6 +128,7 @@ export function useLogBodyWeight() {
       Promise.all([
         queryClient.invalidateQueries({ queryKey: ['body-weight'] }),
         queryClient.invalidateQueries({ queryKey: ['progress', 'overview'] }),
+        queryClient.invalidateQueries({ queryKey: ['nutrition'] }),
       ]),
   })
 }
@@ -140,6 +141,7 @@ export function useDeleteBodyWeight() {
       Promise.all([
         queryClient.invalidateQueries({ queryKey: ['body-weight'] }),
         queryClient.invalidateQueries({ queryKey: ['progress', 'overview'] }),
+        queryClient.invalidateQueries({ queryKey: ['nutrition'] }),
       ]),
   })
 }

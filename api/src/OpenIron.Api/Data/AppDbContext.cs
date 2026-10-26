@@ -12,6 +12,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<BodyWeightEntry> BodyWeightEntries => Set<BodyWeightEntry>();
     public DbSet<ServerSettings> ServerSettings => Set<ServerSettings>();
     public DbSet<Invite> Invites => Set<Invite>();
+    public DbSet<NutritionSettings> NutritionSettings => Set<NutritionSettings>();
 
     protected override void OnModelCreating(ModelBuilder b)
     {
@@ -32,6 +33,16 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             // Invites outlive the people they mention: deleting an account keeps the record, minus the link.
             e.HasOne<User>().WithMany().HasForeignKey(x => x.CreatedByUserId).OnDelete(DeleteBehavior.SetNull);
             e.HasOne<User>().WithMany().HasForeignKey(x => x.UsedByUserId).OnDelete(DeleteBehavior.SetNull);
+        });
+
+        b.Entity<NutritionSettings>(e =>
+        {
+            e.HasKey(x => x.UserId);
+            // Stored as text so the table stays readable and reordering an enum can't change what a row means.
+            e.Property(x => x.Sex).HasConversion<string>().HasMaxLength(20);
+            e.Property(x => x.Activity).HasConversion<string>().HasMaxLength(20);
+            e.Property(x => x.Goal).HasConversion<string>().HasMaxLength(20);
+            e.HasOne<User>().WithOne().HasForeignKey<NutritionSettings>(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
         });
 
         b.Entity<Exercise>(e =>

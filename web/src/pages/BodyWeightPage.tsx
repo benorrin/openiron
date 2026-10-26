@@ -4,6 +4,7 @@ import { LineChart } from '../components/charts/LineChart'
 import { RangeFilter } from '../components/RangeFilter'
 import { RANGES, withinRange } from '../lib/range'
 import { formatDate, formatKg, formatShortDate, parseDate, todayIso } from '../lib/format'
+import { BodyTabs } from '../components/BodyTabs'
 import { PageSkeleton } from '../components/Skeleton'
 import { EmptyState } from '../components/EmptyState'
 import { Icon } from '../components/Icon'
@@ -33,6 +34,7 @@ export function BodyWeightPage() {
 
   return (
     <div className="page">
+      <BodyTabs />
       <h1>Body weight</h1>
 
       <form className="card row" onSubmit={submit} style={{ alignItems: 'flex-end' }}>
